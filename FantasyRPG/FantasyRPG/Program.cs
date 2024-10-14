@@ -17,6 +17,14 @@ namespace FantasyRPG
             Character warrior = characterFactory.CreateCharacter("Warrior");
             Console.WriteLine(warrior.health);
             Console.WriteLine(((Warrior)warrior).swordDamage);
+
+            CommonItemFactory commonItemFactory = new CommonItemFactory();
+            Item weapon = commonItemFactory.CreateWeapon();
+            Console.WriteLine(((Weapon)weapon).damage);
+
+            LegendaryItemFactory legendaryItemFactory = new LegendaryItemFactory();
+            Item potion = legendaryItemFactory.CreatePotion();
+            Console.WriteLine(((Potion)potion).duration);
         }
     }
 }
