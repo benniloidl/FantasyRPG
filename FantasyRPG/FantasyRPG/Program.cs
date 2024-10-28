@@ -38,6 +38,7 @@ namespace FantasyRPG
             warrior.PerformAction();
             */
 
+            /*
             IEnemyFactory slimeFactory = new SlimeFactory();
             IEnemyFactory goblinFactory = new GoblinFactory();
             IEnemyFactory dragonFactory = new DragonFactory();
@@ -54,6 +55,30 @@ namespace FantasyRPG
 
             dragon.Move();
             dragon.Attack();
+            */
+
+            // Create QuestManager (Subject)
+            QuestManager questManager = new QuestManager();
+
+            // Create Characters (Observers)
+            CharacterFactory characterFactory = new CharacterFactory();
+            IObserver player = characterFactory.CreateCharacter("Warrior");
+            
+            IObserver npc = new NPC("Old Wise Man", "Useless", 15);
+
+            // Register Observers
+            questManager.RegisterObserver(player);
+            questManager.RegisterObserver(npc);
+
+            // Update quest status
+            questManager.UpdateQuestStatus("Quest Started");
+            questManager.UpdateQuestStatus("Quest Completed");
+
+            // Unregister player
+            questManager.UnregisterObserver(player);
+
+            // Update quest status again
+            questManager.UpdateQuestStatus("Quest Failed");
         }
     }
 }

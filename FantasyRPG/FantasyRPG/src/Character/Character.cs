@@ -1,4 +1,4 @@
-﻿public class Character
+﻿public class Character : IObserver
 {
     public int health { get; set; }
     public int mana { get; set; }
@@ -22,5 +22,10 @@
     public void setCharacterState(ICharacterState characterState)
     {
         _characterState = characterState;
+    }
+
+    public void Update(string questStatus)
+    {
+        Console.WriteLine($"Character has been notified of the quest status: {questStatus}");
     }
 }
