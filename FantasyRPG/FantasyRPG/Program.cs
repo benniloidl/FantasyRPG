@@ -6,6 +6,7 @@ namespace FantasyRPG
     {
         public static void Main()
         {
+            /*
             // GameWorld gameWorld = GameWorld.GetInstance();
             // Console.WriteLine("GameWorld instance created");
             // Console.WriteLine(gameWorld.weather);
@@ -13,8 +14,8 @@ namespace FantasyRPG
             // GameWorld gameWorld2 = GameWorld.GetInstance();
             // Console.WriteLine(gameWorld2.weather);
 
-            CharacterFactory characterFactory = new CharacterFactory();
-            Character warrior = characterFactory.CreateCharacter("Warrior");
+            // CharacterFactory characterFactory = new CharacterFactory();
+            // Character warrior = characterFactory.CreateCharacter("Warrior");
             // Console.WriteLine(warrior.health);
             // Console.WriteLine(((Warrior)warrior).swordDamage);
 
@@ -26,7 +27,7 @@ namespace FantasyRPG
             // Item potion = legendaryItemFactory.CreatePotion();
             // Console.WriteLine(((Potion)potion).duration);
 
-            warrior.PerformAction();
+            // warrior.PerformAction();
 
             IActionStrategy actionStrategy = new RangedAction();
             warrior.setActionStrategy(actionStrategy);
@@ -35,6 +36,24 @@ namespace FantasyRPG
 
             warrior.setCharacterState(new DefendingState());
             warrior.PerformAction();
+            */
+
+            IEnemyFactory slimeFactory = new SlimeFactory();
+            IEnemyFactory goblinFactory = new GoblinFactory();
+            IEnemyFactory dragonFactory = new DragonFactory();
+
+            Enemy slime = slimeFactory.CreateEnemy(EnemyRank.Elite);
+            Enemy goblin = goblinFactory.CreateEnemy(EnemyRank.Normal);
+            Enemy dragon = dragonFactory.CreateEnemy(EnemyRank.Boss);
+
+            slime.Move();
+            slime.Attack();
+
+            goblin.Move();
+            goblin.Attack();
+
+            dragon.Move();
+            dragon.Attack();
         }
     }
 }
