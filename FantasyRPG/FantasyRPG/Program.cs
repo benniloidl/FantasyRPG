@@ -7,27 +7,27 @@ namespace FantasyRPG
         public static void Main()
         {
             /*
-            // GameWorld gameWorld = GameWorld.GetInstance();
-            // Console.WriteLine("GameWorld instance created");
-            // Console.WriteLine(gameWorld.weather);
-            // gameWorld.weather = "rainy";
-            // GameWorld gameWorld2 = GameWorld.GetInstance();
-            // Console.WriteLine(gameWorld2.weather);
+            GameWorld gameWorld = GameWorld.GetInstance();
+            Console.WriteLine("GameWorld instance created");
+            Console.WriteLine(gameWorld.weather);
+            gameWorld.weather = "rainy";
+            GameWorld gameWorld2 = GameWorld.GetInstance();
+            Console.WriteLine(gameWorld2.weather);
 
-            // CharacterFactory characterFactory = new CharacterFactory();
-            // Character warrior = characterFactory.CreateCharacter("Warrior");
-            // Console.WriteLine(warrior.health);
-            // Console.WriteLine(((Warrior)warrior).swordDamage);
+            CharacterFactory characterFactory = new CharacterFactory();
+            Character warrior = characterFactory.CreateCharacter("Warrior");
+            Console.WriteLine(warrior.health);
+            Console.WriteLine(((Warrior)warrior).swordDamage);
 
-            // CommonItemFactory commonItemFactory = new CommonItemFactory();
-            // Item weapon = commonItemFactory.CreateWeapon();
-            // Console.WriteLine(((Weapon)weapon).damage);
+            CommonItemFactory commonItemFactory = new CommonItemFactory();
+            Item weapon = commonItemFactory.CreateWeapon();
+            Console.WriteLine(((Weapon)weapon).damage);
 
-            // LegendaryItemFactory legendaryItemFactory = new LegendaryItemFactory();
-            // Item potion = legendaryItemFactory.CreatePotion();
-            // Console.WriteLine(((Potion)potion).duration);
+            LegendaryItemFactory legendaryItemFactory = new LegendaryItemFactory();
+            Item potion = legendaryItemFactory.CreatePotion();
+            Console.WriteLine(((Potion)potion).duration);
 
-            // warrior.PerformAction();
+            warrior.PerformAction();
 
             IActionStrategy actionStrategy = new RangedAction();
             warrior.setActionStrategy(actionStrategy);
@@ -57,6 +57,7 @@ namespace FantasyRPG
             dragon.Attack();
             */
 
+            /*
             // Create QuestManager (Subject)
             QuestManager questManager = new QuestManager();
 
@@ -79,6 +80,30 @@ namespace FantasyRPG
 
             // Update quest status again
             questManager.UpdateQuestStatus("Quest Failed");
+            */
+
+            CharacterFactory characterFactory = new CharacterFactory();
+            Character player = characterFactory.CreateCharacter("Warrior");
+            Character enemy = characterFactory.CreateCharacter("Archer");
+
+            var gameController = new GameController();
+
+            // Check enemy health
+            Console.WriteLine(enemy.health);
+
+            // Execute attack command
+            var attackCommand = new AttackCommand(player, enemy);
+            gameController.ExecuteCommand(attackCommand);
+
+            // Check enemy health again
+            Console.WriteLine(enemy.health);
+
+            // Execute heal command
+            var healCommand = new HealCommand(enemy);
+            gameController.ExecuteCommand(healCommand);
+
+            // Check enemy health again
+            Console.WriteLine(enemy.health);
         }
     }
 }
