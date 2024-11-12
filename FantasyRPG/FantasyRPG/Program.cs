@@ -86,24 +86,19 @@ namespace FantasyRPG
             Character player = characterFactory.CreateCharacter("Warrior");
             Character enemy = characterFactory.CreateCharacter("Archer");
 
-            var gameController = new GameController();
+            var controller = new Controller();
 
-            // Check enemy health
-            Console.WriteLine(enemy.health);
+            // Set up key mappings
+            controller.SetCommand(ConsoleKey.A, new AttackCommand(player, enemy));
+            controller.SetCommand(ConsoleKey.D, new DefendCommand(player));
+            controller.SetCommand(ConsoleKey.H, new HealCommand(player));
+            controller.SetCommand(ConsoleKey.M, new MoveCommand(player));
 
-            // Execute attack command
-            var attackCommand = new AttackCommand(player, enemy);
-            gameController.ExecuteCommand(attackCommand);
-
-            // Check enemy health again
-            Console.WriteLine(enemy.health);
-
-            // Execute heal command
-            var healCommand = new HealCommand(enemy);
-            gameController.ExecuteCommand(healCommand);
-
-            // Check enemy health again
-            Console.WriteLine(enemy.health);
+            // Main loop to handle input
+            while (true)
+            {
+                controller.HandleInput();
+            }
         }
     }
 }
