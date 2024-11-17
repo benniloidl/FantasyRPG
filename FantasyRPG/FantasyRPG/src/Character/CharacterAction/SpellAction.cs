@@ -1,4 +1,4 @@
-﻿public class MagicAction : IActionStrategy
+﻿public class SpellAction : IActionStrategy
 {
     public void PerformAction()
     {
