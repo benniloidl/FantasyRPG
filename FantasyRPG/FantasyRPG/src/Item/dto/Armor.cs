@@ -1,12 +1,11 @@
-﻿public class Armor : Item
+﻿public class Armor : DefensiveItem
 {
-    public int defense { get; set; }
     public int durability { get; set; }
 
     public Armor(int defense, int durability, ItemRarity itemRarity)
     {
-        this.defense = defense;
         this.durability = durability;
+        this.defense = defense;
         this.itemRarity = itemRarity;
     }
 }

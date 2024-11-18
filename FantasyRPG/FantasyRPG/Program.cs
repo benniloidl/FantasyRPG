@@ -82,6 +82,7 @@ namespace FantasyRPG
             questManager.UpdateQuestStatus("Quest Failed");
             */
 
+            /*
             CharacterFactory characterFactory = new CharacterFactory();
             Character player = characterFactory.CreateCharacter("Warrior");
             Character enemy = characterFactory.CreateCharacter("Archer");
@@ -99,6 +100,38 @@ namespace FantasyRPG
             {
                 controller.HandleInput();
             }
+            */
+
+            CharacterFactory characterFactory = new CharacterFactory();
+            Character player = characterFactory.CreateCharacter("Warrior");
+
+            Inventory inventory = player.GetInventory();
+            
+            CommonItemFactory commonItemFactory = new CommonItemFactory();
+            Item weapon = commonItemFactory.CreateWeapon();
+
+            inventory.AddItem(weapon);
+
+            Console.WriteLine("Items in inventory:");
+            inventory.GetItems().ForEach(item => Console.WriteLine($"{ item } ({ item.itemRarity })"));
+
+            Console.WriteLine($"Equipped weapon: { player.GetEquippedWeapon() }");
+
+            Console.WriteLine("\nEquipping weapon...\n");
+            player.EquipItem(weapon);
+
+            Console.WriteLine($"Equipped weapon: { player.GetEquippedWeapon() }");
+
+            Console.WriteLine("Items in inventory:");
+            inventory.GetItems().ForEach(item => Console.WriteLine($"{item} ({item.itemRarity})"));
+
+            Console.WriteLine("\nUnequipping weapon...\n");
+            player.UnequipItem(weapon);
+
+            Console.WriteLine($"Equipped weapon: {player.GetEquippedWeapon()}");
+
+            Console.WriteLine("Items in inventory:");
+            inventory.GetItems().ForEach(item => Console.WriteLine($"{item} ({item.itemRarity})"));
         }
     }
 }

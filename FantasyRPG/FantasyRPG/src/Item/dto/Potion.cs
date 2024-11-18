@@ -1,4 +1,4 @@
-﻿public class Potion : Item
+﻿public class Potion : UtilityItem
 {
     public string effect { get; set; }
     public int duration { get; set; }
