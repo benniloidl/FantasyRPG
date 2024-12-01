@@ -1,4 +1,4 @@
 ﻿public interface IObserver
 {
-    void Update(string questStatus);
+    void Update(Quest quest);
 }

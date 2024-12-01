@@ -7,9 +7,10 @@
         _character = character;
     }
 
+    // Increase the character's health by 10
     public void Execute()
     {
         Console.WriteLine("Character is healing.");
-        _character.health += 10;
+        _character.Health += 10;
     }
 }

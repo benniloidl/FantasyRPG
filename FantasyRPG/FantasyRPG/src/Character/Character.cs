@@ -1,12 +1,13 @@
-﻿public class Character : IObserver
-{
-    public int health { get; set; }
-    public int mana { get; set; }
-    public int strength { get; set; }
-    public int agility { get; set; }
-    public int speed { get; set; }
+﻿using System.Xml.Linq;
 
-    private IActionStrategy _actionStrategy;
+public class Character : IObserver
+{
+    public int Health { get; set; }
+    public int Mana { get; set; }
+    public int Strength { get; set; }
+    public int Agility { get; set; }
+    public int Speed { get; set; }
+
     private ICharacterState _characterState = new IdleState();
 
     private Inventory _inventory = new Inventory();
@@ -19,9 +20,9 @@
         _characterState.HandleState();
     }
 
-    public void setActionStrategy(IActionStrategy actionStrategy)
+    public ICharacterState getCharacterState()
     {
-        _actionStrategy = actionStrategy;
+        return _characterState;
     }
 
     public void setCharacterState(ICharacterState characterState)
@@ -29,9 +30,22 @@
         _characterState = characterState;
     }
 
-    public void Update(string questStatus)
+    // When a quest is updated, check if the quest is completed
+    public void Update(Quest quest)
     {
-        Console.WriteLine($"Character has been notified of the quest status: {questStatus}");
+        if (quest.Progress >= quest.Goal)
+        {
+            Console.WriteLine($"Character has been notified that the quest has been completed!");
+
+            // Add the quest reward to the character's inventory
+            _inventory.AddItem(quest.Reward);
+            Console.WriteLine($"Character has received the quest reward: {quest.Reward} ({quest.Reward.GetType})");
+
+            // Delay for 1s
+            System.Threading.Thread.Sleep(1000);
+
+            return;
+        }
     }
 
     public Inventory GetInventory() => _inventory;

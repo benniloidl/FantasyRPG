@@ -11,21 +11,20 @@ namespace FantasyRPG
 
             // Create characters
             CharacterFactory characterFactory = new CharacterFactory();
-            Character player = characterFactory.CreateCharacter("Warrior");
-            Character enemy = characterFactory.CreateCharacter("Archer");
+            Character player1 = characterFactory.CreateCharacter("Warrior");
+            Character player2 = characterFactory.CreateCharacter("Archer");
 
             // Add characters to the game world and set the player to be the active character
-            gameWorld.AddCharacter(player);
-            gameWorld.AddCharacter(enemy);
-            gameWorld.SetActiveCharacter(player);
+            gameWorld.AddCharacter(player1);
+            gameWorld.AddCharacter(player2);
+            gameWorld.SetActiveCharacter(player1);
+
+            // Create enemy and add to the game world (3, 1)
+            DragonFactory dragonFactory = new DragonFactory();
+            Enemy dragon = dragonFactory.CreateEnemy(EnemyRank.Normal);
+            gameWorld.AddEnemy(dragon, (3, 1));
 
             var controller = new Controller();
-
-            // Set up key mappings
-            controller.SetCommand(ConsoleKey.A, new AttackCommand(player, enemy));
-            controller.SetCommand(ConsoleKey.D, new DefendCommand(player));
-            controller.SetCommand(ConsoleKey.H, new HealCommand(player));
-            controller.SetCommand(ConsoleKey.M, new MoveCommand(player));
 
             // Main loop to handle input
             while (true)

@@ -1,7 +1,7 @@
 ﻿public abstract class Enemy
 {
     public string Name { get; protected set; }
-    public int Health { get; protected set; }
+    public int Health { get; set; }
     public int Mana { get; protected set; }
     public int Strength { get; protected set; }
     public int Agility { get; protected set; }
