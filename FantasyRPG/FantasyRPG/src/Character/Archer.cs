@@ -1,14 +1,14 @@
 ﻿public class Archer : Character
 {
-    public int amountOfArrows { get; set; }
+    public int AmountOfArrows { get; set; }
     public Archer()
     {
-        health = 75;
-        mana = 75;
-        strength = 5;
-        agility = 10;
-        speed = 5;
+        Health = 75;
+        Mana = 75;
+        Strength = 5;
+        Agility = 10;
+        Speed = 5;
 
-        amountOfArrows = 100;
+        AmountOfArrows = 100;
     }
 }

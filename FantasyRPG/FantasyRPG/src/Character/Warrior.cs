@@ -1,15 +1,15 @@
 ﻿public class Warrior : Character
 {
-    public int swordDamage { get; set; }
+    public int SwordDamage { get; set; }
 
     public Warrior()
     {
-        health = 100;
-        mana = 50;
-        strength = 10;
-        agility = 5;
-        speed = 5;
+        Health = 100;
+        Mana = 50;
+        Strength = 10;
+        Agility = 5;
+        Speed = 5;
 
-        swordDamage = 20;
+        SwordDamage = 20;
     }
 }

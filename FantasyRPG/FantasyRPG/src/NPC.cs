@@ -1,18 +1,30 @@
-﻿public class NPC : IObserver
-{
-    public string name { get; set; }
-    public string role { get; set; }
-    public int health { get; set; }
+﻿using System.Data;
+using System.Xml.Linq;
 
-    public NPC(string name, string role, int health)
+public class NPC : IObserver
+{
+    public int Id { get; }
+    public string Name { get; }
+    public string Role { get; }
+    public (int, int) Location { get; }
+    public Quest Quest { get; set; }
+
+    public NPC(int id, string name, string role, (int, int) location, Quest quest)
     {
-        this.name = name;
-        this.role = role;
-        this.health = health;
+        Id = id;
+        Name = name;
+        Role = role;
+        Location = location;
+        Quest = quest;
     }
 
-    public void Update(string questStatus)
+    public void Update(Quest quest)
     {
-        Console.WriteLine($"{name} (NPC) has been notified of the quest status: {questStatus}");
+        if (quest.Progress >= quest.Goal)
+        {
+            Console.WriteLine($"{Name} (NPC) has been notified that the quest has been completed!");
+            return;
+        }
+        Console.WriteLine($"{Name} (NPC) has been notified of the quest status: {quest.Progress} / {quest.Goal}");
     }
 }
