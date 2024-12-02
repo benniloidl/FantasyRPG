@@ -26,6 +26,7 @@ public class DefaultState : ITerminalState
         // Print current character and health
         Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
         Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
+        Console.WriteLine();
 
         // Print game world map
         _controller.GetGameWorld().PrintMap();

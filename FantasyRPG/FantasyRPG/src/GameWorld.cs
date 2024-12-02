@@ -202,7 +202,7 @@
                 }
                 else
                 {
-                    Console.Write(" 🌳");
+                    Console.Write("   ");
                 }
 
                 switch (cell)
@@ -227,7 +227,7 @@
                     Console.Write("📍");
                 } else
                 {
-                    Console.Write("🌳");
+                    Console.Write("  ");
                 }
 
                 Console.Write(" |");
