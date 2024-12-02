@@ -9,7 +9,7 @@ public class DefaultState : ITerminalState
         _controller = controller;
     }
 
-    public void HandleState()
+    public void PrintTerminal()
     {
         // Change TerminalState to CombatState when enemy is present
         if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
@@ -49,11 +49,9 @@ public class DefaultState : ITerminalState
         }
 
         Console.WriteLine("Press 'Q' to quit");
-
-        HandleInput();
     }
 
-    void HandleInput()
+    public void HandleInput()
     {
         // Read key input
         ConsoleKey key = Console.ReadKey().Key;

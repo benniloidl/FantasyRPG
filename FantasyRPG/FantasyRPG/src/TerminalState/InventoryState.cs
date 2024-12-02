@@ -18,7 +18,7 @@ public class InventoryState : ITerminalState
         _selectedEquipmentIndex = 0;
     }
 
-    public void HandleState()
+    public void PrintTerminal()
     {
         Console.Clear();
 
@@ -76,11 +76,9 @@ public class InventoryState : ITerminalState
         Console.WriteLine("Select an item using the arrow keys");
         Console.WriteLine("Press 'E' to equip the selected item and 'U' to unequip an item");
         Console.WriteLine("Press 'Q' to close the inventory");
-
-        HandleInput();
     }
 
-    void HandleInput()
+    public void HandleInput()
     {
         // Read key input
         ConsoleKey key = Console.ReadKey().Key;

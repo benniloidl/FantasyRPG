@@ -14,7 +14,7 @@ public class CombatState : ITerminalState
         _enemy = controller.GetGameWorld().GetEnemyAtCurrentLocation() ?? throw new InvalidOperationException("No enemy present at current location");
     }
 
-    public void HandleState()
+    public void PrintTerminal()
     {
         Console.Clear();
 
@@ -79,7 +79,7 @@ public class CombatState : ITerminalState
         HandleInput();
     }
 
-    void HandleInput()
+    public void HandleInput()
     {
         // Read key input
         ConsoleKey key = Console.ReadKey().Key;

@@ -1,4 +1,5 @@
 ﻿public interface ITerminalState
 {
-    public void HandleState();
+    public void PrintTerminal();
+    public void HandleInput();
 }
