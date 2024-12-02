@@ -195,27 +195,42 @@
 
             foreach (var cell in row)
             {
-                Console.Write(cell.ToString().Substring(0, 1));
-                // Write 'E' to the console if there is an enemy in the current row and cell
+                // Indicate whether there is an enemy in the current row and cell
                 if (_enemyLocations.ContainsValue((rowIterator, cellIterator)))
                 {
-                    Console.Write(" E");
+                    Console.Write(" 👻");
                 }
                 else
                 {
-                    Console.Write("  ");
+                    Console.Write(" 🌳");
                 }
 
-                // Write 'X' to the console if the active character is in the current row and cell
+                switch (cell)
+                {
+                    case WorldMapStructure.Town:
+                        Console.Write(" 🏠 ");
+                        break;
+                    case WorldMapStructure.Village:
+                        Console.Write(" 💒 ");
+                        break;
+                    case WorldMapStructure.Dungeon:
+                        Console.Write(" 🏰 ");
+                        break;
+                    default:
+                        Console.Write(" 🌳 ");
+                        break;
+                }
+
+                // Indicate whether the player currently is in the current row and cell
                 if (_location.Item1 == rowIterator && _location.Item2 == cellIterator)
                 {
-                    Console.Write(" X");
+                    Console.Write("📍");
                 } else
                 {
-                    Console.Write("  ");
+                    Console.Write("🌳");
                 }
 
-                Console.Write(" | ");
+                Console.Write(" |");
 
                 cellIterator++;
             }
