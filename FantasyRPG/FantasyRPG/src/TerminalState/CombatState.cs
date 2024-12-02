@@ -33,9 +33,9 @@ public class CombatState : ITerminalState
         Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
         Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
         Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
-        Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.GetType().Name ?? "None"}");
-        Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.GetType().Name ?? "None"}");
-        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.GetType().Name ?? "None"}");
+        Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
+        Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
+        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");

@@ -39,7 +39,7 @@ public class InventoryState : ITerminalState
                 Console.Write("> ");
             }
 
-            Console.WriteLine(items[i].GetType());
+            Console.WriteLine(items[i].ToString());
         }
 
         // If inventory is empty, print a message
@@ -58,17 +58,17 @@ public class InventoryState : ITerminalState
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.GetType().Name ?? "None"}");
+        Console.WriteLine($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
         if (_selectedEquipmentIndex == 1)
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.GetType().Name ?? "None"}");
+        Console.WriteLine($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
         if (_selectedEquipmentIndex == 2)
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.GetType().Name ?? "None"}");
+        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");
