@@ -121,23 +121,34 @@ public class InventoryState : ITerminalState
         // Unequip the selected item using 'U'
         else if (key == ConsoleKey.U)
         {
-            // Check if the inventory is empty
-            if (_controller.GetGameWorld().GetActiveCharacter().GetInventory().GetItems().Count == 0)
-            {
-                return;
-            }
+            // Determine active character
+            Character activeCharacter = _controller.GetGameWorld().GetActiveCharacter();
 
             // Determine which equipment slot should be unequipped
             switch (_selectedEquipmentIndex)
             {
                 case 0:
-                    _controller.GetGameWorld().GetActiveCharacter().UnequipItem(_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon());
+                    var equippedWeapon = activeCharacter.GetEquippedWeapon();
+                    if (equippedWeapon != null)
+                    {
+                        activeCharacter.UnequipItem(equippedWeapon);
+                    }
                     break;
+
                 case 1:
-                    _controller.GetGameWorld().GetActiveCharacter().UnequipItem(_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive());
+                    var equippedDefensive = activeCharacter.GetEquippedDefensive();
+                    if (equippedDefensive != null)
+                    {
+                        activeCharacter.UnequipItem(equippedDefensive);
+                    }
                     break;
+
                 case 2:
-                    _controller.GetGameWorld().GetActiveCharacter().UnequipItem(_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility());
+                    var equippedUtility = activeCharacter.GetEquippedUtility();
+                    if (equippedUtility != null)
+                    {
+                        activeCharacter.UnequipItem(equippedUtility);
+                    }
                     break;
             }
         }
