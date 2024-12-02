@@ -74,6 +74,8 @@
         _questManager.RegisterObserver(character);
     }
 
+    public List<Character> GetCharacters() => _characters;
+
     // Check if there is more than one character in the game world
     public bool HasMoreThanOneCharacter() => _characters.Count > 1;
 

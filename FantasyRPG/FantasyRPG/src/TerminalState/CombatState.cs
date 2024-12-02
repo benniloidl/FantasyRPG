@@ -29,8 +29,26 @@ public class CombatState : ITerminalState
         Console.WriteLine("--------------------");
         Console.WriteLine();
 
-        // Print character name, health and equipment
-        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
+        Console.Write($"Characters:");
+
+        // Iterate over characters
+        foreach (Character character in _controller.GetGameWorld().GetCharacters())
+        {
+            // Make downed characters stand out in dark gray
+            if (character.Health <= 0)
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+
+            // Make the active character stand out in blue
+            if (character == _controller.GetGameWorld().GetActiveCharacter())
+                Console.ForegroundColor = ConsoleColor.Blue;
+
+            Console.Write($" {character}");
+
+            // Reset color
+            Console.ResetColor();
+        }
+
+        // Print active character's health and equipment
         Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
         Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
         Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
