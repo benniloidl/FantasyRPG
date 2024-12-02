@@ -22,6 +22,16 @@ public class Controller
 
     public void HandleInput()
     {
+        // Remove defeated enemies from the game world
+        _gameWorld.RemoveDefeatedEnemies();
+
+        // Return to default state when in combat state and no enemies are present
+        if (_terminalState is CombatState combatState && _gameWorld.GetEnemyAtCurrentLocation() == null)
+        {
+            SetTerminalState(new DefaultState(this));
+        }
+
+        // State specific handling
         _terminalState.HandleState();
     }
 }

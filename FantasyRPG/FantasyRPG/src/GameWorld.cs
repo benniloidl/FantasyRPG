@@ -94,6 +94,18 @@
     // Add enemy to the game world
     public void AddEnemy(Enemy enemy, (int, int) location) => _enemyLocations.Add(enemy, location);
 
+    // Get enemy at the current location of the active character
+    public Enemy? GetEnemyAtCurrentLocation() => _enemyLocations.FirstOrDefault(enemy => enemy.Value == _location).Key;
+
+    // Remove defeated enemies (health <= 0) from the game world
+    public void RemoveDefeatedEnemies()
+    {
+        foreach (var enemy in _enemyLocations.Where(enemy => enemy.Key.Health <= 0).ToList())
+        {
+            _enemyLocations.Remove(enemy.Key);
+        }
+    }
+
     // Move to new location
     public void Move((int, int) direction)
     {
@@ -171,9 +183,6 @@
 
         Console.WriteLine($"Current Quest: {currentQuest.QuestName} - {currentQuest.QuestDescription} ({currentQuest.Progress} / {currentQuest.Goal})");
     }
-
-    // Get enemy at the current location of the active character
-    public Enemy? GetEnemyAtCurrentLocation() => _enemyLocations.FirstOrDefault(enemy => enemy.Value == _location).Key;
 
     // Print the game world map
     public void PrintMap()
