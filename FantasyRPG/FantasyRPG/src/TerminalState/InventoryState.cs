@@ -20,8 +20,6 @@ public class InventoryState : ITerminalState
 
     public void PrintTerminal()
     {
-        Console.Clear();
-
         Console.WriteLine($"Inventory of {_controller.GetGameWorld().GetActiveCharacter()}:");
         Console.WriteLine();
         Console.WriteLine("--------------------");
@@ -78,11 +76,8 @@ public class InventoryState : ITerminalState
         Console.WriteLine("Press 'Q' to close the inventory");
     }
 
-    public void HandleInput()
+    public void HandleInput(ConsoleKey key)
     {
-        // Read key input
-        ConsoleKey key = Console.ReadKey().Key;
-
         // Exit the inventory state and return to the returnToState state using 'Q'
         if (key == ConsoleKey.Q)
             _controller.SetTerminalState(_returnToState);

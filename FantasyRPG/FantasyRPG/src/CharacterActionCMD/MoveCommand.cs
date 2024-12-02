@@ -1,14 +1,16 @@
 ﻿public class MoveCommand : ICommand
 {
+    private readonly Controller _controller;
     private Character _character;
 
-    public MoveCommand(Character character)
+    public MoveCommand(Controller controller, Character character)
     {
+        _controller = controller;
         _character = character;
     }
 
     public void Execute()
     {
-        Console.WriteLine("Character is moving.");
+        _controller.AddNotification("Character is moving.");
     }
 }

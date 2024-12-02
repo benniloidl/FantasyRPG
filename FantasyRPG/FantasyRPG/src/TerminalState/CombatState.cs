@@ -16,7 +16,12 @@ public class CombatState : ITerminalState
 
     public void PrintTerminal()
     {
-        Console.Clear();
+        // Change TerminalState to DefaultState when no enemies are present
+        if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() == null)
+        {
+            _controller.SetTerminalState(new DefaultState(_controller));
+            _controller.ForceUpdate();
+        }
 
         Console.WriteLine("In Combat!");
         Console.WriteLine();
@@ -75,15 +80,10 @@ public class CombatState : ITerminalState
 
         Console.WriteLine();
         Console.WriteLine("Press 'I' to open the inventory");
-
-        HandleInput();
     }
 
-    public void HandleInput()
+    public void HandleInput(ConsoleKey key)
     {
-        // Read key input
-        ConsoleKey key = Console.ReadKey().Key;
-
         // Determine active character
         Character activeCharacter = _controller.GetGameWorld().GetActiveCharacter();
 
@@ -102,7 +102,7 @@ public class CombatState : ITerminalState
             if (_enemy != null)
             {
                 // Perform attack
-                _controller.GetGameController().ExecuteCommand(new AttackCommand(activeCharacter, _enemy));
+                _controller.GetGameController().ExecuteCommand(new AttackCommand(_controller, activeCharacter, _enemy));
 
                 // Check if quest is active and update its progress
                 _controller.GetGameWorld().UpdateQuestStatus();
@@ -111,14 +111,14 @@ public class CombatState : ITerminalState
 
         // Execute defend command for active character
         else if (key == ConsoleKey.D)
-            _controller.GetGameController().ExecuteCommand(new DefendCommand(activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new DefendCommand(_controller, activeCharacter));
 
         // Execute heal command for active character
         else if (key == ConsoleKey.H)
-            _controller.GetGameController().ExecuteCommand(new HealCommand(activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new HealCommand(_controller, activeCharacter));
 
         // Execute move command for active character
         else if (key == ConsoleKey.M)
-            _controller.GetGameController().ExecuteCommand(new MoveCommand(activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new MoveCommand(_controller, activeCharacter));
     }
 }

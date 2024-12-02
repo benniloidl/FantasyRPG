@@ -1,18 +1,23 @@
 ﻿using System.Collections.Generic;
 
-public class Controller
+public class Controller : IObserver
 {
     private GameController _controller;
     private GameWorld _gameWorld;
     private ITerminalState _terminalState;
-    private string? _notification;
+    private List<string> _notifications;
+    private bool? _forceUpdate;
 
     public Controller()
     {
-        // Initialize game controller, game world and terminal state
+        // Initialize game controller, game world, terminal state and notifications
         _controller = new GameController();
         _gameWorld = GameWorld.GetInstance();
         _terminalState = new DefaultState(this);
+        _notifications = new List<string>();
+
+        // Add the controller to the game world's quest manager as an observer
+        _gameWorld.AddControllerToQuestManagerObservers(this);
     }
 
     public GameController GetGameController() => _controller;
@@ -22,33 +27,53 @@ public class Controller
     public void SetTerminalState(ITerminalState terminalState) => _terminalState = terminalState;
 
     // Allow the notification to be updated
-    public void SetNotification(string notification) => _notification = notification;
+    public void AddNotification(string notification) => _notifications.Add(notification);
+
+    // Allow the terminal to be forced to update before waiting for input
+    public void ForceUpdate() => _forceUpdate = true;
 
     public void HandleInput()
     {
         // Remove defeated enemies from the game world
         _gameWorld.RemoveDefeatedEnemies();
 
-        // Return to default state when in combat state and no enemies are present
-        if (_terminalState is CombatState combatState && _gameWorld.GetEnemyAtCurrentLocation() == null)
-        {
-            SetTerminalState(new DefaultState(this));
-        }
+        // Clear console
+        Console.Clear();
 
         // State specific terminal print
         _terminalState.PrintTerminal();
 
-        // Print notification
-        if (_notification != null)
+        // Immediately proceed into the next terminal iteration if the terminal was forced to update
+        if (_forceUpdate == true)
         {
-            Console.WriteLine();
-            Console.WriteLine(_notification);
+            _forceUpdate = false;
+            return;
         }
 
-        // State specific input handling
-        _terminalState.HandleInput();
+        // Print all notifications
+        Console.WriteLine();
+        foreach (string notification in _notifications)
+        {
+            Console.WriteLine(notification);
+        }
 
-        // Before the next iteration, clear the notification
-        _notification = null;
+        // Remove all notifications
+        _notifications.Clear();
+
+        // Read key input
+        ConsoleKey key = Console.ReadKey().Key;
+
+        // State specific input handling
+        _terminalState.HandleInput(key);
+    }
+
+    public void Update(Quest quest)
+    {
+        // When a quest is updated, check if the quest is completed
+        if (quest.Progress >= quest.Goal)
+        {
+            AddNotification($"Character has been notified that the quest has been completed!");
+            AddNotification($"Character has received the quest reward: {quest.Reward.ToString()}");
+        }
     }
 }

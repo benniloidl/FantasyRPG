@@ -242,4 +242,11 @@
             rowIterator++;
         }
     }
+
+    // Add controller to quest manager observers to receive updates whenever a quest is updated
+    public void AddControllerToQuestManagerObservers(Controller controller)
+    {
+        if (!(controller is IObserver)) return;
+        _questManager.RegisterObserver((IObserver)controller);
+    }
 }

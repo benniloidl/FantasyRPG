@@ -15,10 +15,8 @@ public class DefaultState : ITerminalState
         if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
         {
             _controller.SetTerminalState(new CombatState(_controller));
-            return;
+            _controller.ForceUpdate();
         }
-
-        Console.Clear();
 
         // Print map info
         Console.WriteLine($"FantasyRPG ⌚ {_controller.GetGameWorld().Time} ☀️ {_controller.GetGameWorld().Weather}");
@@ -51,11 +49,8 @@ public class DefaultState : ITerminalState
         Console.WriteLine("Press 'Q' to quit");
     }
 
-    public void HandleInput()
+    public void HandleInput(ConsoleKey key)
     {
-        // Read key input
-        ConsoleKey key = Console.ReadKey().Key;
-
         // Quit game when 'Q' is pressed
         if (key == ConsoleKey.Q)
         {
