@@ -20,8 +20,12 @@ public class DefaultState : ITerminalState
 
         Console.Clear();
 
+        // Print map info
+        Console.WriteLine($"FantasyRPG ⌚ {_controller.GetGameWorld().Time} ☀️ {_controller.GetGameWorld().Weather}");
+
         // Print current character and health
-        Console.WriteLine($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
+        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
+        Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
 
         // Print game world map
         _controller.GetGameWorld().PrintMap();
@@ -68,20 +72,24 @@ public class DefaultState : ITerminalState
         else if (key == ConsoleKey.Y)
             _controller.GetGameWorld().AcceptQuest();
 
+        // Change active character when 'C' is pressed
+        else if (key == ConsoleKey.C)
+            _controller.GetGameWorld().ChangeActiveCharacter();
+
         // Move to the left when left arrow key is pressed
         else if (key == ConsoleKey.LeftArrow)
-            _controller.GetGameWorld().MoveActiveCharacter((0, -1));
+            _controller.GetGameWorld().Move((0, -1));
 
         // Move to the right when right arrow key is pressed
         else if (key == ConsoleKey.RightArrow)
-            _controller.GetGameWorld().MoveActiveCharacter((0, 1));
+            _controller.GetGameWorld().Move((0, 1));
 
         // Move up when up arrow key is pressed
         else if (key == ConsoleKey.UpArrow)
-            _controller.GetGameWorld().MoveActiveCharacter((-1, 0));
+            _controller.GetGameWorld().Move((-1, 0));
 
         // Move down when down arrow key is pressed
         else if (key == ConsoleKey.DownArrow)
-            _controller.GetGameWorld().MoveActiveCharacter((1, 0));
+            _controller.GetGameWorld().Move((1, 0));
     }
 }

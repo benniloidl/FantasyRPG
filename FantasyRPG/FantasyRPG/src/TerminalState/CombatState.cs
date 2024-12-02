@@ -39,10 +39,13 @@ public class CombatState : ITerminalState
         Console.WriteLine();
 
         // Print character name and health
-        Console.Write($"{_controller.GetGameWorld().GetActiveCharacter()} (");
+        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()} (");
         PrintHealth(_controller.GetGameWorld().GetActiveCharacter().Health);
-        Console.WriteLine(")");
+        Console.Write(")");
+        Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
 
+        Console.WriteLine();
+        Console.WriteLine("Use the arrow keys to change the character");
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
@@ -66,8 +69,12 @@ public class CombatState : ITerminalState
         // Determine active character
         Character activeCharacter = _controller.GetGameWorld().GetActiveCharacter();
 
+        // Change active character when 'C' is pressed
+        if (key == ConsoleKey.C)
+            _controller.GetGameWorld().ChangeActiveCharacter();
+
         // Open inventory when 'I' is pressed
-        if (key == ConsoleKey.I)
+        else if (key == ConsoleKey.I)
             _controller.SetTerminalState(new InventoryState(_controller, this));
 
         // Attack when 'A' is pressed

@@ -22,7 +22,7 @@ public class InventoryState : ITerminalState
     {
         Console.Clear();
 
-        Console.WriteLine("Inventory:");
+        Console.WriteLine($"Inventory of {_controller.GetGameWorld().GetActiveCharacter()}:");
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
