@@ -7,11 +7,7 @@
             throw new ArgumentException("Item is not a weapon");
         }
 
-        if (!character.GetInventory().GetItems().Contains(weapon))
-        {
-            Console.WriteLine("Character does not have this weapon");
-            return;
-        }
+        if (!character.GetInventory().GetItems().Contains(weapon)) return;
 
         if (character.GetEquippedWeapon() != null)
         {
@@ -20,19 +16,13 @@
 
         character.SetEquippedWeapon(weapon);
         character.GetInventory().RemoveItem(weapon);
-        Console.WriteLine($"Weapon { weapon } ({ weapon.itemRarity }) has been equipped");
     }
 
     public void Unequip(Character character)
     {
-        if (character.GetEquippedWeapon() == null)
-        {
-            Console.WriteLine("Character does not have a weapon equipped");
-            return;
-        }
+        if (character.GetEquippedWeapon() == null) return;
 
         character.GetInventory().AddItem(character.GetEquippedWeapon());
-        Console.WriteLine($"Weapon { character.GetEquippedWeapon() } ({ character.GetEquippedWeapon().itemRarity }) has been unequipped");
         character.SetEquippedWeapon(null);
     }
 }

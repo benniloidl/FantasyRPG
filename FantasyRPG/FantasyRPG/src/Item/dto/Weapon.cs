@@ -1,18 +1,18 @@
 ﻿public class Weapon : Item
 {
-    public int damage { get; set; }
-    public WeaponType weaponType { get; set; }
+    public int Damage { get; set; }
+    public WeaponType WeaponType { get; set; }
 
     public Weapon(int damage, WeaponType weaponType, ItemRarity itemRarity)
     {
-        this.damage = damage;
-        this.weaponType = weaponType;
-        this.itemRarity = itemRarity;
+        Damage = damage;
+        WeaponType = weaponType;
+        ItemRarity = itemRarity;
     }
 
     // Change toString method to return e.g. "Legendary Melee Weapon (10 Damage)"
     public override string ToString()
     {
-        return $"{itemRarity} {weaponType} Weapon ({damage} Damage)";
+        return $"{ItemRarity} {WeaponType} Weapon ({Damage} Damage)";
     }
 }
