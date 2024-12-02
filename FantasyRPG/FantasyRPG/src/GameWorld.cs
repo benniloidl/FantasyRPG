@@ -29,16 +29,20 @@
             new WorldMapStructure[] { WorldMapStructure.None, WorldMapStructure.None, WorldMapStructure.Village, WorldMapStructure.None, WorldMapStructure.None }
         };
 
+        // Random quest reward item
+        LegendaryItemFactory legendaryItemFactory = new LegendaryItemFactory();
+        Item legendaryItem = legendaryItemFactory.CreateWeapon();
+
         // Initialize NPCs with quests
         npcs = new List<NPC>
         {
-            new NPC(1, "King/Queen", "Quest Giver", (0, 1), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(2, "Merchant", "Trader", (0, 3), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(3, "Villager", "Confederate", (1, 1), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(4, "King/Queen", "Quest Giver", (2, 3), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(5, "Merchant", "Trader", (3, 0), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(6, "Villager", "Confederate", (3, 4), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item())),
-            new NPC(7, "Villager", "Confederate", (4, 2), new Quest("Attack Mastery", "Perform 3 Attacks", 3, new Item()))
+            new NPC(1, "King/Queen", "Quest Giver", (0, 1), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(2, "Merchant", "Trader", (0, 3), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(3, "Villager", "Confederate", (1, 1), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(4, "King/Queen", "Quest Giver", (2, 3), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(5, "Merchant", "Trader", (3, 0), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(6, "Villager", "Confederate", (3, 4), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem)),
+            new NPC(7, "Villager", "Confederate", (4, 2), new Quest("Attack Mastery", "Perform 3 Attacks", 3, legendaryItem))
         };
     }
 
