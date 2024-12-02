@@ -52,21 +52,23 @@ public class InventoryState : ITerminalState
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
+        Console.WriteLine("Equipment:");
+        Console.WriteLine();
         if (_selectedEquipmentIndex == 0)
         {
-            Console.Write("> ");
+            Console.Write(">");
         }
-        Console.WriteLine("Equipped Weapon: " + _controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.GetType());
+        Console.WriteLine($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.GetType().Name ?? "None"}");
         if (_selectedEquipmentIndex == 1)
         {
-            Console.Write("> ");
+            Console.Write(">");
         }
-        Console.WriteLine("Equipped Defensive: " + _controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.GetType());
+        Console.WriteLine($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.GetType().Name ?? "None"}");
         if (_selectedEquipmentIndex == 2)
         {
-            Console.Write("> ");
+            Console.Write(">");
         }
-        Console.WriteLine("Equipped Utility: " + _controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.GetType());
+        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.GetType().Name ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");

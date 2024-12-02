@@ -29,26 +29,26 @@ public class CombatState : ITerminalState
         Console.WriteLine("--------------------");
         Console.WriteLine();
 
-        // Print enemy name and health
-        Console.Write($"{_enemy.Name} ({_enemy.Rank}) (");
-        PrintHealth(_enemy.Health);
-        Console.WriteLine(")");
-
-        Console.WriteLine();
-        Console.WriteLine("--------------------");
-        Console.WriteLine();
-
-        // Print character name and health
-        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()} (");
-        PrintHealth(_controller.GetGameWorld().GetActiveCharacter().Health);
-        Console.Write(")");
+        // Print character name, health and equipment
+        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
         Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
+        Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
+        Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.GetType().Name ?? "None"}");
+        Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.GetType().Name ?? "None"}");
+        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.GetType().Name ?? "None"}");
 
-        Console.WriteLine();
-        Console.WriteLine("Use the arrow keys to change the character");
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
+
+        // Print enemy name and health
+        Console.WriteLine($"{_enemy.Name} ({_enemy.Rank})");
+        Console.WriteLine($" ❤️ {_enemy.Health}");
+
+        Console.WriteLine();
+        Console.WriteLine("--------------------");
+        Console.WriteLine();
+
         Console.WriteLine("Actions:");
         Console.WriteLine(" A: Attack");
         Console.WriteLine(" D: Defend");
@@ -102,14 +102,5 @@ public class CombatState : ITerminalState
         // Execute move command for active character
         else if (key == ConsoleKey.M)
             _controller.GetGameController().ExecuteCommand(new MoveCommand(activeCharacter));
-    }
-
-    // Print health in the form of hearts
-    void PrintHealth(int health)
-    {
-        for (int i = 0; i < health; i++)
-        {
-            Console.Write("❤️");
-        }
     }
 }
