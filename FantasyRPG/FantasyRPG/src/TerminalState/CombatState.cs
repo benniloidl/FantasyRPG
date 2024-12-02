@@ -34,13 +34,13 @@ public class CombatState : ITerminalState
         // Iterate over characters
         foreach (Character character in _controller.GetGameWorld().GetCharacters())
         {
-            // Make downed characters stand out in dark gray
-            if (character.Health <= 0)
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-
             // Make the active character stand out in blue
             if (character == _controller.GetGameWorld().GetActiveCharacter())
                 Console.ForegroundColor = ConsoleColor.Blue;
+
+            // Indicate downed characters with a dead skull
+            if (character.Health <= 0)
+                Console.Write(" 💀");
 
             Console.Write($" {character}");
 
