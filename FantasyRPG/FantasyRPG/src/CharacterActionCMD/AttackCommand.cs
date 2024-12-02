@@ -25,8 +25,11 @@
     {
         _controller.AddNotification("An attack has been executed.");
 
+        // Calculate the attack damage based on the attacker's strength and the equipped weapon
+        int attackDamage = _attacker.Strength + (_attacker.GetEquippedWeapon()?.damage ?? 0);
+
         // Reduce the target's health by the attacker's strength
-        if (_targetCharacter != null) _targetCharacter.Health -= _attacker.Strength;
-        else if (_targetEnemy != null) _targetEnemy.Health -= _attacker.Strength;
+        if (_targetCharacter != null) _targetCharacter.Health -= attackDamage;
+        else if (_targetEnemy != null) _targetEnemy.Health -= attackDamage;
     }
 }
