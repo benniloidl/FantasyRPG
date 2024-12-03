@@ -12,5 +12,12 @@
     }
 
     public override void Move() => Console.WriteLine($"{Name} moves by hopping.");
-    public override void Attack() => Console.WriteLine($"{Name} attacks by bouncing at the enemy.");
+    public override void Attack(Character character)
+    {
+        // Reduce the character's health by the attack damage of the enemy
+        int attackDamage = CalculateAttackDamage(character);
+        character.Health -= attackDamage;
+
+        Controller.GetInstance().AddNotification($"{Name} attacks by bouncing at the you. You received {attackDamage} Damage.");
+    }
 }

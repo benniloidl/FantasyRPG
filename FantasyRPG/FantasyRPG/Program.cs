@@ -28,7 +28,7 @@ namespace FantasyRPG
             Enemy dragon = dragonFactory.CreateEnemy(EnemyRank.Normal);
             gameWorld.AddEnemy(dragon, (3, 1));
 
-            var controller = new Controller();
+            Controller controller = Controller.GetInstance();
 
             // Main loop to handle input
             while (true)

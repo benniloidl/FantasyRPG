@@ -4,9 +4,16 @@ public class DefaultState : ITerminalState
 {
     private readonly Controller _controller;
 
+    // Constructor with dependency injection
     public DefaultState(Controller controller)
     {
         _controller = controller;
+    }
+
+    // Default constructor for singleton pattern
+    public DefaultState()
+    {
+        _controller = Controller.GetInstance();
     }
 
     public void PrintTerminal()
@@ -14,7 +21,7 @@ public class DefaultState : ITerminalState
         // Change TerminalState to CombatState when enemy is present
         if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
         {
-            _controller.SetTerminalState(new CombatState(_controller));
+            _controller.SetTerminalState(new CombatState());
             _controller.ForceUpdate();
         }
 
@@ -60,7 +67,7 @@ public class DefaultState : ITerminalState
 
         // Change TerminalState to InventoryState when 'I' is pressed
         else if (key == ConsoleKey.I)
-            _controller.SetTerminalState(new InventoryState(_controller, this));
+            _controller.SetTerminalState(new InventoryState(this));
 
         // Accept quest when 'Y' is pressed
         else if (key == ConsoleKey.Y)

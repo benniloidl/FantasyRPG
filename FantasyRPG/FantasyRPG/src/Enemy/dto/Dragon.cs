@@ -12,5 +12,12 @@
     }
 
     public override void Move() => Console.WriteLine($"{Name} flies through the air.");
-    public override void Attack() => Console.WriteLine($"{Name} breathes fire.");
+    public override void Attack(Character character)
+    {
+        // Reduce the character's health by the attack damage of the enemy
+        int attackDamage = CalculateAttackDamage(character);
+        character.Health -= attackDamage;
+
+        Controller.GetInstance().AddNotification($"{Name} breathes fire. You received {attackDamage} Damage.");
+    }
 }

@@ -2,13 +2,15 @@
 
 public class Controller : IObserver
 {
+    private static Controller? _instance;
+
     private GameController _controller;
     private GameWorld _gameWorld;
     private ITerminalState _terminalState;
     private List<string> _notifications;
     private bool? _forceUpdate;
 
-    public Controller()
+    private Controller()
     {
         // Initialize game controller, game world, terminal state and notifications
         _controller = new GameController();
@@ -18,6 +20,16 @@ public class Controller : IObserver
 
         // Add the controller to the game world's quest manager as an observer
         _gameWorld.AddControllerToQuestManagerObservers(this);
+    }
+
+    // Singleton pattern
+    public static Controller GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new Controller();
+        }
+        return _instance;
     }
 
     public GameController GetGameController() => _controller;

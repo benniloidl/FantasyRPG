@@ -6,12 +6,12 @@ public class CombatState : ITerminalState
     
     private Enemy _enemy;
 
-    public CombatState(Controller controller)
+    public CombatState()
     {
-        _controller = controller;
+        _controller = Controller.GetInstance();
 
         // Get the enemy at the current location, or throw an exception if no enemy is present
-        _enemy = controller.GetGameWorld().GetEnemyAtCurrentLocation() ?? throw new InvalidOperationException("No enemy present at current location");
+        _enemy = _controller.GetGameWorld().GetEnemyAtCurrentLocation() ?? throw new InvalidOperationException("No enemy present at current location");
     }
 
     public void PrintTerminal()
@@ -19,7 +19,7 @@ public class CombatState : ITerminalState
         // Change TerminalState to DefaultState when no enemies are present
         if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() == null)
         {
-            _controller.SetTerminalState(new DefaultState(_controller));
+            _controller.SetTerminalState(new DefaultState());
             _controller.ForceUpdate();
         }
 
@@ -93,7 +93,7 @@ public class CombatState : ITerminalState
 
         // Open inventory when 'I' is pressed
         else if (key == ConsoleKey.I)
-            _controller.SetTerminalState(new InventoryState(_controller, this));
+            _controller.SetTerminalState(new InventoryState(this));
 
         // Attack when 'A' is pressed
         else if (key == ConsoleKey.A)
@@ -102,7 +102,7 @@ public class CombatState : ITerminalState
             if (_enemy != null)
             {
                 // Perform attack
-                _controller.GetGameController().ExecuteCommand(new AttackCommand(_controller, activeCharacter, _enemy));
+                _controller.GetGameController().ExecuteCommand(new AttackCommand(activeCharacter, _enemy));
 
                 // Check if quest is active and update its progress
                 _controller.GetGameWorld().UpdateQuestStatus();
@@ -111,14 +111,14 @@ public class CombatState : ITerminalState
 
         // Execute defend command for active character
         else if (key == ConsoleKey.D)
-            _controller.GetGameController().ExecuteCommand(new DefendCommand(_controller, activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new DefendCommand(activeCharacter));
 
         // Execute heal command for active character
         else if (key == ConsoleKey.H)
-            _controller.GetGameController().ExecuteCommand(new HealCommand(_controller, activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new HealCommand(activeCharacter));
 
         // Execute move command for active character
         else if (key == ConsoleKey.M)
-            _controller.GetGameController().ExecuteCommand(new MoveCommand(_controller, activeCharacter));
+            _controller.GetGameController().ExecuteCommand(new MoveCommand(activeCharacter));
     }
 }

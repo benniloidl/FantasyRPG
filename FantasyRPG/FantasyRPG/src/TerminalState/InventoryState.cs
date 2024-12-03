@@ -8,9 +8,9 @@ public class InventoryState : ITerminalState
     private int _selectedInventoryIndex;
     private int _selectedEquipmentIndex;
 
-    public InventoryState(Controller controller, ITerminalState returnToState)
+    public InventoryState(ITerminalState returnToState)
     {
-        _controller = controller;
+        _controller = Controller.GetInstance();
         _returnToState = returnToState;
 
         // Initialize selected indexes to 0 (the first item)
