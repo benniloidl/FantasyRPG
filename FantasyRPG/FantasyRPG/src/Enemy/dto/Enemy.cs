@@ -68,8 +68,6 @@
         // Randomly vary the enemy's base attack damage by +/- 10%, rounded to the nearest integer
         attackDamage += new Random().Next(-attackDamage / 10, attackDamage / 10 + 1);
 
-        // Increase the enemy's attack damage based on its weapon
-
         // Reduce the enemy's attack damage based on the character's agility and equipped defensive item
         attackDamage -= character.Agility;
         attackDamage -= character.GetEquippedDefensive()?.Defense ?? 0;
