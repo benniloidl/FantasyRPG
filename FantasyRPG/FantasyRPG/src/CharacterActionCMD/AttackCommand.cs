@@ -15,7 +15,13 @@
         // Calculate the attack damage based on the attacker's strength and the equipped weapon
         int attackDamage = _attacker.Strength + (_attacker.GetEquippedWeapon()?.Damage ?? 0);
 
-        // Reduce the target's health by the attacker's strength
+        // The agility of the target may reduce the attack damage
+        attackDamage -= _target.Agility;
+
+        // Make sure the attack damage doesn't go below 0
+        if (attackDamage < 0) attackDamage = 0;
+
+        // Reduce the target's health by the attack damage
         _target.Health -= attackDamage;
 
         Controller.GetInstance().AddNotification($"An attack has been executed. You made {attackDamage} Damage.");
