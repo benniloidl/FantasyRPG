@@ -64,9 +64,10 @@ public class CombatState : ITerminalState
         Console.WriteLine("--------------------");
         Console.WriteLine();
 
-        // Print enemy name and health
+        // Print enemy name, health and weapon
         Console.WriteLine($"{_enemy.Name} ({_enemy.Rank})");
         Console.WriteLine($" ❤️ {_enemy.Health}");
+        Console.WriteLine($" 🗡️ {_enemy.Weapon?.ToString() ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");
