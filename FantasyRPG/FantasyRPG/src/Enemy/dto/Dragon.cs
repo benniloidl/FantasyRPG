@@ -11,7 +11,7 @@
         ScaleStatsByRank();
     }
 
-    public override void Move() => Console.WriteLine($"{Name} flies through the air.");
+    public override void Move() => Controller.GetInstance().AddNotification($"{Name} flies through the air.");
     public override void Attack(Character character)
     {
         // Reduce the character's health by the attack damage of the enemy
