@@ -57,12 +57,12 @@ public class DatabaseManager
 
         // All the commands for the tables to be created in the database
         string[] tables = new string[] {
-            "CREATE TABLE IF NOT EXISTS Character (id INT NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, health INT NOT NULL, mana INT NOT NULL, strength INT NOT NULL, agility INT NOT NULL, speed INT NOT NULL, equippedWeaponId INT NULL, equippedDefensiveId INT NULL, equippedUtilityId INT NULL, swordDamage INT NULL, crazyness INT NULL, amountOfArrows INT NULL)",
-            "CREATE TABLE IF NOT EXISTS Enemy (id INT NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, name VARCHAR(20) NULL, health INT NOT NULL, mana INT NOT NULL, strength INT NOT NULL, agility INT NOT NULL, rank INT NOT NULL, weaponId INT NULL)",
-            "CREATE TABLE IF NOT EXISTS Item (id INT NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, rarity INT NOT NULL, damage INT NULL, defense INT NULL, durability INT NULL, effect VARCHAR(20) NULL, duration INT NULL, weaponType INT NULL)",
-            "CREATE TABLE IF NOT EXISTS InventoryItem (characterId INT NOT NULL, itemId INT NOT NULL, PRIMARY KEY (characterId, itemId))",
-            "CREATE TABLE IF NOT EXISTS GameWorldStructure (worldMapStructure INT NOT NULL, coordX INT NOT NULL, coordY INT NOT NULL, PRIMARY KEY (worldMapStructure, coordX, coordY))",
-            "CREATE TABLE IF NOT EXISTS GameWorldEnemyPosition (enemyId INT NOT NULL, coordX INT NOT NULL, coordY INT NOT NULL, PRIMARY KEY (enemyId, coordX, coordY))"
+            "CREATE TABLE IF NOT EXISTS Character (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, health INTEGER NOT NULL, mana INTEGER NOT NULL, strength INTEGER NOT NULL, agility INTEGER NOT NULL, speed INTEGER NOT NULL, equippedWeaponId INTEGER NULL, equippedDefensiveId INTEGER NULL, equippedUtilityId INTEGER NULL, swordDamage INTEGER NULL, crazyness INTEGER NULL, amountOfArrows INTEGER NULL)",
+            "CREATE TABLE IF NOT EXISTS Enemy (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, name VARCHAR(20) NULL, health INTEGER NOT NULL, mana INTEGER NOT NULL, strength INTEGER NOT NULL, agility INTEGER NOT NULL, rank INTEGER NOT NULL, weaponId INTEGER NULL)",
+            "CREATE TABLE IF NOT EXISTS Item (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, type VARCHAR(20) NOT NULL, rarity INTEGER NOT NULL, damage INTEGER NULL, defense INTEGER NULL, durability INTEGER NULL, effect VARCHAR(20) NULL, duration INTEGER NULL, weaponType INTEGER NULL)",
+            "CREATE TABLE IF NOT EXISTS InventoryItem (characterId INTEGER NOT NULL, itemId INTEGER NOT NULL, PRIMARY KEY (characterId, itemId))",
+            "CREATE TABLE IF NOT EXISTS GameWorldStructure (worldMapStructure INTEGER NOT NULL, coordX INTEGER NOT NULL, coordY INTEGER NOT NULL, PRIMARY KEY (worldMapStructure, coordX, coordY))",
+            "CREATE TABLE IF NOT EXISTS GameWorldEnemyPosition (enemyId INTEGER NOT NULL, coordX INTEGER NOT NULL, coordY INTEGER NOT NULL, PRIMARY KEY (enemyId, coordX, coordY))"
         };
 
         // Execute the SQL commands to create the tables
@@ -386,7 +386,7 @@ public class DatabaseManager
     }
 
     // Save a new enemy to the database and return its id or update an existing enemy
-    public int AddEnemy(Enemy enemy, (int, int)? position)
+    public int AddEnemy(Enemy enemy, (int, int) position)
     {
         SQLiteCommand sqlite_cmd;
         sqlite_cmd = sqlite_conn.CreateCommand();
@@ -417,10 +417,8 @@ public class DatabaseManager
                 AddItem(enemy.Weapon);
 
                 // Save the enemy position to the database
-                if (position != null)
-                {
-                    AddEnemyPosition(enemy.Id.Value, position.Value);
-                }
+                
+                AddEnemyPosition(enemy.Id.Value, position);
 
                 return enemy.Id.Value;
             }
@@ -443,10 +441,8 @@ public class DatabaseManager
         int id = Convert.ToInt32(sqlite_cmd.ExecuteScalar());
 
         // Save the enemy position to the database
-        if (position != null)
-        {
-            AddEnemyPosition(id, position.Value);
-        }
+        
+        AddEnemyPosition(id, position);
 
         return id;
     }
@@ -503,7 +499,7 @@ public class DatabaseManager
         return worldMap;
     }
 
-    public void AddGameWorldStructure((int, int) position, WorldMapStructure structure)
+    public void AddGameWorldStructure(WorldMapStructure structure, (int, int) position)
     {
         SQLiteCommand sqlite_cmd;
         sqlite_cmd = sqlite_conn.CreateCommand();
