@@ -4,6 +4,7 @@ public class Controller : IObserver
 {
     private static Controller? _instance;
 
+    private readonly DatabaseManager _databaseManager;
     private GameController _controller;
     private GameWorld _gameWorld;
     private ITerminalState _terminalState;
@@ -12,7 +13,8 @@ public class Controller : IObserver
 
     private Controller()
     {
-        // Initialize game controller, game world, terminal state and notifications
+        // Initialize database manager, game controller, game world, terminal state and notifications
+        _databaseManager = DatabaseManager.GetInstance();
         _controller = new GameController();
         _gameWorld = GameWorld.GetInstance();
         _terminalState = new DefaultState(this);
@@ -32,6 +34,8 @@ public class Controller : IObserver
         return _instance;
     }
 
+    public DatabaseManager GetDatabaseManager() => _databaseManager;
+
     public GameController GetGameController() => _controller;
     public GameWorld GetGameWorld() => _gameWorld;
 
@@ -50,8 +54,9 @@ public class Controller : IObserver
         if (_gameWorld.GetCharacters().TrueForAll(character => character.Health <= 0))
         {
             AddNotification("All characters are dead. Game over!");
-            Console.WriteLine("Quitting game...");
-            Environment.Exit(0);
+
+            // Change state to SaveState
+            _terminalState = new SaveState();
         }
 
         // Remove defeated enemies from the game world

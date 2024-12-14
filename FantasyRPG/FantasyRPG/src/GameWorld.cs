@@ -74,6 +74,11 @@
         _questManager.RegisterObserver(character);
     }
 
+    public void RemoveCharacter(Character character)
+    {
+        _characters.Remove(character);
+    }
+
     public List<Character> GetCharacters() => _characters;
 
     // Check if there is more than one character in the game world
@@ -95,6 +100,8 @@
 
     // Add enemy to the game world
     public void AddEnemy(Enemy enemy, (int, int) location) => _enemyLocations.Add(enemy, location);
+
+    public Dictionary<Enemy, (int, int)> GetEnemyLocations() => _enemyLocations;
 
     // Get enemy at the current location of the active character
     public Enemy? GetEnemyAtCurrentLocation() => _enemyLocations.FirstOrDefault(enemy => enemy.Value == _location).Key;

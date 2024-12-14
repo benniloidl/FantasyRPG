@@ -58,12 +58,9 @@ public class DefaultState : ITerminalState
 
     public void HandleInput(ConsoleKey key)
     {
-        // Quit game when 'Q' is pressed
+        // Change to SaveState when 'Q' is pressed
         if (key == ConsoleKey.Q)
-        {
-            Console.WriteLine("Quitting game...");
-            Environment.Exit(0);
-        }
+            _controller.SetTerminalState(new SaveState());
 
         // Change TerminalState to InventoryState when 'I' is pressed
         else if (key == ConsoleKey.I)
