@@ -74,7 +74,8 @@ public class CombatState : ITerminalState
         Console.WriteLine();
 
         Console.WriteLine("Actions:");
-        Console.WriteLine(" A: Attack");
+        if (_controller.GetGameWorld().GetActiveCharacter().Health > 0)
+            Console.WriteLine(" A: Attack");
         Console.WriteLine(" D: Defend");
         Console.WriteLine(" H: Heal");
         Console.WriteLine(" M: Move");
@@ -100,14 +101,16 @@ public class CombatState : ITerminalState
         else if (key == ConsoleKey.A)
         {
             // Check if enemy is present
-            if (_enemy != null)
-            {
-                // Perform attack
-                _controller.GetGameController().ExecuteCommand(new AttackCommand(activeCharacter, _enemy));
+            if (_enemy == null) return;
 
-                // Check if quest is active and update its progress
-                _controller.GetGameWorld().UpdateQuestStatus();
-            }
+            // Check if active character is alive
+            if (activeCharacter.Health <= 0) return;
+
+            // Perform attack
+            _controller.GetGameController().ExecuteCommand(new AttackCommand(activeCharacter, _enemy));
+
+            // Check if quest is active and update its progress
+            _controller.GetGameWorld().UpdateQuestStatus();
         }
 
         // Execute defend command for active character
