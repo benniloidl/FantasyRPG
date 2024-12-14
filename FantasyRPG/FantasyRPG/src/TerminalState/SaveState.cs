@@ -23,7 +23,7 @@ public class SaveState : ITerminalState
         Console.WriteLine();
         Console.Write("Would you like to save ");
 
-        // Check if saveObject is a character
+        // Ask for saving the characters first, then the enemies, and finally the game world structures
         if (_characters.Count > 0)
         {
             Character character = _characters.First();
