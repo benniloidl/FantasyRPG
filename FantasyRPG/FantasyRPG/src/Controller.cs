@@ -46,6 +46,14 @@ public class Controller : IObserver
 
     public void HandleInput()
     {
+        // End the game if all characters are dead
+        if (_gameWorld.GetCharacters().TrueForAll(character => character.Health <= 0))
+        {
+            AddNotification("All characters are dead. Game over!");
+            Console.WriteLine("Quitting game...");
+            Environment.Exit(0);
+        }
+
         // Remove defeated enemies from the game world
         _gameWorld.RemoveDefeatedEnemies();
 
