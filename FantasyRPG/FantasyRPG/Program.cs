@@ -6,6 +6,10 @@ namespace FantasyRPG
     {
         public static void Main()
         {
+            // Set console encoding to UTF-8
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.Write("\xfeff"); // bom = byte order mark
+
             // Instantiate game world (Singleton)
             GameWorld gameWorld = GameWorld.GetInstance();
 
@@ -24,7 +28,7 @@ namespace FantasyRPG
             Enemy dragon = dragonFactory.CreateEnemy(EnemyRank.Normal);
             gameWorld.AddEnemy(dragon, (3, 1));
 
-            var controller = new Controller();
+            Controller controller = Controller.GetInstance();
 
             // Main loop to handle input
             while (true)

@@ -9,6 +9,6 @@
 
     public void Execute()
     {
-        Console.WriteLine("Character is moving.");
+        Controller.GetInstance().AddNotification("Character is moving.");
     }
 }

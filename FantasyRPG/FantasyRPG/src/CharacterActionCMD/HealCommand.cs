@@ -10,7 +10,7 @@
     // Increase the character's health by 10
     public void Execute()
     {
-        Console.WriteLine("Character is healing.");
+        Controller.GetInstance().AddNotification("Character is healing.");
         _character.Health += 10;
     }
 }

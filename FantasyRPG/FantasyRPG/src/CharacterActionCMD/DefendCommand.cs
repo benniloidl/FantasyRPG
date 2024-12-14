@@ -9,7 +9,7 @@
 
     public void Execute()
     {
-        Console.WriteLine("Character is defending.");
+        Controller.GetInstance().AddNotification("Character is defending.");
         _character.setCharacterState(new DefendingState());
         _character.PerformAction();
     }

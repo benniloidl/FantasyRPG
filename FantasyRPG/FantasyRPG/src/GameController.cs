@@ -6,8 +6,5 @@
     {
         command.Execute();
         _commandHistory.Push(command);
-
-        // Delay for 1s
-        System.Threading.Thread.Sleep(1000);
     }
 }

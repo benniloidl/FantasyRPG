@@ -30,21 +30,13 @@ public class Character : IObserver
         _characterState = characterState;
     }
 
-    // When a quest is updated, check if the quest is completed
     public void Update(Quest quest)
     {
+        // When a quest is updated, check if the quest is completed
         if (quest.Progress >= quest.Goal)
         {
-            Console.WriteLine($"Character has been notified that the quest has been completed!");
-
             // Add the quest reward to the character's inventory
             _inventory.AddItem(quest.Reward);
-            Console.WriteLine($"Character has received the quest reward: {quest.Reward} ({quest.Reward.GetType})");
-
-            // Delay for 1s
-            System.Threading.Thread.Sleep(1000);
-
-            return;
         }
     }
 

@@ -1,4 +1,4 @@
 ﻿public class Item
 {
-    public ItemRarity itemRarity { get; set; }
+    public ItemRarity ItemRarity { get; set; }
 }
