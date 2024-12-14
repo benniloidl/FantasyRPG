@@ -4,12 +4,6 @@ public class DefaultState : ITerminalState
 {
     private readonly Controller _controller;
 
-    // Constructor with dependency injection
-    public DefaultState(Controller controller)
-    {
-        _controller = controller;
-    }
-
     // Default constructor for singleton pattern
     public DefaultState()
     {

@@ -4,41 +4,53 @@ public class LoadState : ITerminalState
 {
     private readonly Controller _controller;
 
-    public LoadState()
+    private readonly List<Character> _savedCharacters;
+    private List<Character> _characters;
+
+    private int cursorPosition = 0;
+
+    public LoadState(Controller controller)
     {
-        _controller = Controller.GetInstance();
+        _controller = controller;
+
+        _savedCharacters = _controller.GetDatabaseManager().GetCharacters();
+        _characters = new List<Character>();
     }
 
     public void PrintTerminal()
     {
+        // Change TerminalState to DefaultState when no characters are saved
+        if (_savedCharacters.Count == 0)
+        {
+            _controller.SetTerminalState(new DefaultState());
+            _controller.ForceUpdate();
+        }
+
         Console.WriteLine("Before opening the game, you can decide whether to import your progress.");
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
-        Console.Write("Would you like to import ");
+        Console.Write("Would you like to import one or many of the following saved characters?");
+        Console.WriteLine();
 
-        // Check if saveObject is a character
-        if (_controller.GetGameWorld().GetCharacters().Count > 0)
+        for (int i = 0; i < _savedCharacters.Count; i++)
         {
-            Character character = _controller.GetGameWorld().GetCharacters().First();
-            Console.WriteLine($"character {character}");
-            Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
-            Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
-            Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
-            Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
-            Console.WriteLine($"and {character.GetInventory().GetItems().Count()} items in their inventory?");
-        }
-        else if (_controller.GetGameWorld().GetEnemyLocations().Count > 0)
-        {
-            Enemy enemy = _controller.GetGameWorld().GetEnemyLocations().First().Key;
-            Console.WriteLine($"enemy {enemy}");
-            Console.Write($" ❤️ {enemy.Health}");
-            Console.Write($" 🗡️ {enemy.Weapon?.ToString() ?? "None"}");
-            Console.WriteLine("?");
-        }
-        else
-        {
-            Console.WriteLine("the game world structures?");
+            Console.Write(i == cursorPosition ? "> " : "  ");
+
+            Console.Write('[');
+
+            if (_characters.Contains(_savedCharacters[i]))
+            {
+                Console.Write('X');
+            }
+            else
+            {
+                Console.Write(' ');
+            }
+
+            Console.Write(']');
+
+            Console.WriteLine(_savedCharacters[i]);
         }
 
         Console.WriteLine();
@@ -46,89 +58,43 @@ public class LoadState : ITerminalState
         Console.WriteLine();
 
         Console.WriteLine("Actions:");
-        Console.WriteLine(" Y: Yes");
-        Console.WriteLine(" N: No");
+        Console.WriteLine(" ⬆️⬇️: Change selection");
+        Console.WriteLine(" C: Confirm");
         Console.WriteLine(" Q: Quit");
     }
 
     public void HandleInput(ConsoleKey key)
     {
-        // Quit game when 'Q' is pressed
-        if (key == ConsoleKey.Q)
+        // Update selection when arrow keys are pressed
+        if (key == ConsoleKey.UpArrow)
         {
-            Console.WriteLine("Quitting game...");
-            Environment.Exit(0);
+            cursorPosition = Math.Max(0, cursorPosition - 1);
+        }
+        else if (key == ConsoleKey.DownArrow)
+        {
+            cursorPosition = Math.Min(_savedCharacters.Count - 1, cursorPosition + 1);
         }
 
-        if (_controller.GetGameWorld().GetCharacters().Count > 0)
+        // Confirm selection when 'C' is pressed
+        else if (key == ConsoleKey.C)
         {
-            Character character = _controller.GetGameWorld().GetCharacters().First();
-
-            if (key == ConsoleKey.Y)
+            if (_characters.Contains(_savedCharacters[cursorPosition]))
             {
-                // Save character and remove from game world
-                _controller.GetDatabaseManager().AddCharacter(character);
-                _controller.GetGameWorld().RemoveCharacter(character);
-                _controller.AddNotification($"Character {character} saved.");
+                _characters.Remove(_savedCharacters[cursorPosition]);
             }
-            else if (key == ConsoleKey.N)
+            else
             {
-                // Just remove character from game world
-                _controller.GetGameWorld().RemoveCharacter(character);
-                _controller.AddNotification($"Character {character} not saved.");
+                _characters.Add(_savedCharacters[cursorPosition]);
             }
         }
-        else if (_controller.GetGameWorld().GetEnemyLocations().Count > 0)
+
+        // Change to DefaultState when 'Q' is pressed
+        else if (key == ConsoleKey.Q)
         {
-            Enemy enemy = _controller.GetGameWorld().GetEnemyLocations().First().Key;
-            (int, int) enemyLocation = _controller.GetGameWorld().GetEnemyLocations().GetValueOrDefault(enemy);
+            // Add all selected characters to the game world
+            _characters.ForEach(character => _controller.GetGameWorld().AddCharacter(character));
 
-            if (key == ConsoleKey.Y)
-            {
-                // Save enemy and remove from game world
-                _controller.GetDatabaseManager().AddEnemy(enemy, enemyLocation);
-                _controller.GetGameWorld().GetEnemyLocations().Remove(enemy);
-                _controller.AddNotification($"Enemy {enemy} saved.");
-            }
-            else if (key == ConsoleKey.N)
-            {
-                // Just remove enemy from game world
-                _controller.GetGameWorld().GetEnemyLocations().Remove(enemy);
-                _controller.AddNotification($"Enemy {enemy} not saved.");
-            }
-        }
-        else
-        {
-            // Save game world structures
-            if (key == ConsoleKey.Y)
-            {
-                // Clear prior saved game world structures
-                _controller.GetDatabaseManager().ClearGameWorldStructures();
-
-                // Save game world structures
-                for (int i = 0; i < _controller.GetGameWorld().GetWorldMap().Length; i++)
-                {
-                    for (int j = 0; j < _controller.GetGameWorld().GetWorldMap()[i].Length; j++)
-                    {
-                        WorldMapStructure structure = _controller.GetGameWorld().GetWorldMap()[i][j];
-                        if (structure != WorldMapStructure.None)
-                        {
-                            _controller.GetDatabaseManager().AddGameWorldStructure(structure, (i, j));
-                        }
-                    }
-                }
-
-                _controller.AddNotification("Game world structures saved.");
-
-                Console.WriteLine("Quitting game...");
-                Environment.Exit(0);
-            } else if (key == ConsoleKey.N)
-            {
-                _controller.AddNotification("Game world structures not saved.");
-
-                Console.WriteLine("Quitting game...");
-                Environment.Exit(0);
-            }
+            _controller.SetTerminalState(new DefaultState());
         }
     }
 }

@@ -17,7 +17,7 @@ public class Controller : IObserver
         _databaseManager = DatabaseManager.GetInstance();
         _controller = new GameController();
         _gameWorld = GameWorld.GetInstance();
-        _terminalState = new DefaultState(this);
+        _terminalState = new LoadState(this);
         _notifications = new List<string>();
 
         // Add the controller to the game world's quest manager as an observer
