@@ -2,6 +2,7 @@
 
 public class Character : IObserver
 {
+    public int? Id { get; set; }
     public int Health { get; set; }
     public int Mana { get; set; }
     public int Strength { get; set; }
