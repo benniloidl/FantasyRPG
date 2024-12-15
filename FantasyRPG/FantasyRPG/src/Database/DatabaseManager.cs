@@ -391,7 +391,7 @@ public class DatabaseManager
             // Get the enemy position from the database
             (int, int)? position = LoadEnemyGameWorldPosition(id);
 
-            enemies.Add(enemy, position ?? GameWorld.DEFAULT_ENEMY_SPAWN_LOCATION);
+            enemies.Add(enemy, position ?? GameWorld.DEFAULT_SPAWN_LOCATION);
         }
         return enemies;
     }

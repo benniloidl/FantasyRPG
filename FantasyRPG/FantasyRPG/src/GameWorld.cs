@@ -2,7 +2,7 @@
 {
     private static GameWorld? instance;
 
-    public static (int, int) DEFAULT_ENEMY_SPAWN_LOCATION = (2, 2);
+    public static (int, int) DEFAULT_SPAWN_LOCATION = (2, 2);
 
     public int Time { get; set; }
     public string Weather { get; set; }
@@ -49,7 +49,7 @@
         };
 
         // Set the starting location
-        _location = (2, 2);
+        _location = DEFAULT_SPAWN_LOCATION;
     }
 
     public static GameWorld GetInstance()
