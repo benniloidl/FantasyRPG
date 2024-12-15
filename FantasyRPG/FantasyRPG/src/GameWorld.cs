@@ -2,6 +2,8 @@
 {
     private static GameWorld? instance;
 
+    public static (int, int) DEFAULT_ENEMY_SPAWN_LOCATION = (2, 2);
+
     public int Time { get; set; }
     public string Weather { get; set; }
 
@@ -62,6 +64,24 @@
     public WorldMapStructure[][] GetWorldMap()
     {
         return _worldMap;
+    }
+
+    public void LoadWorldMapStructures(Dictionary<(int, int), WorldMapStructure> _worldMapStructures)
+    {
+        // Firstly, clear the world map
+        foreach (var row in _worldMap)
+        {
+            for (int i = 0; i < row.Length; i++)
+            {
+                row[i] = WorldMapStructure.None;
+            }
+        }
+
+        // Add the world map structures to the world map
+        foreach (var worldMapStructure in _worldMapStructures)
+        {
+            _worldMap[worldMapStructure.Key.Item1][worldMapStructure.Key.Item2] = worldMapStructure.Value;
+        }
     }
 
     // Add character to the game world

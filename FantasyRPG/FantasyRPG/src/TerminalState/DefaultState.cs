@@ -2,47 +2,41 @@
 
 public class DefaultState : ITerminalState
 {
-    private readonly Controller _controller;
-
-    // Default constructor for singleton pattern
-    public DefaultState()
-    {
-        _controller = Controller.GetInstance();
-    }
-
     public void PrintTerminal()
     {
+        Controller controller = Controller.GetInstance();
+
         // Change TerminalState to CombatState when enemy is present
-        if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
+        if (controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
         {
-            _controller.SetTerminalState(new CombatState());
-            _controller.ForceUpdate();
+            controller.SetTerminalState(new CombatState());
+            controller.ForceUpdate();
         }
 
         // Print map info
-        Console.WriteLine($"FantasyRPG ⌚ {_controller.GetGameWorld().Time} ☀️ {_controller.GetGameWorld().Weather}");
+        Console.WriteLine($"FantasyRPG ⌚ {controller.GetGameWorld().Time} ☀️ {controller.GetGameWorld().Weather}");
 
         // Print current character and health
-        Console.Write($"Active character: {_controller.GetGameWorld().GetActiveCharacter()}");
-        Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
+        Console.Write($"Active character: {controller.GetGameWorld().GetActiveCharacter()}");
+        Console.WriteLine(controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
         Console.WriteLine();
 
         // Print game world map
-        _controller.GetGameWorld().PrintMap();
+        controller.GetGameWorld().PrintMap();
         Console.WriteLine();
 
         // Print current quest
-        _controller.GetGameWorld().PrintCurrentQuest();
+        controller.GetGameWorld().PrintCurrentQuest();
         Console.WriteLine();
 
         // Print current character's location (structure, first NPC and available quests)
-        _controller.GetGameWorld().PrintLocation();
-        _controller.GetGameWorld().PrintAvailableQuest();
+        controller.GetGameWorld().PrintLocation();
+        controller.GetGameWorld().PrintAvailableQuest();
         Console.WriteLine();
 
         Console.WriteLine("Move using the arrow keys or");
 
-        if (_controller.GetGameWorld().IsQuestAvailable())
+        if (controller.GetGameWorld().IsQuestAvailable())
         {
             Console.WriteLine("You can press 'Y' to accept the quest");
         }
@@ -52,36 +46,38 @@ public class DefaultState : ITerminalState
 
     public void HandleInput(ConsoleKey key)
     {
+        Controller controller = Controller.GetInstance();
+
         // Change to SaveState when 'Q' is pressed
         if (key == ConsoleKey.Q)
-            _controller.SetTerminalState(new SaveState());
+            controller.SetTerminalState(new SaveState());
 
         // Change TerminalState to InventoryState when 'I' is pressed
         else if (key == ConsoleKey.I)
-            _controller.SetTerminalState(new InventoryState(this));
+            controller.SetTerminalState(new InventoryState(this));
 
         // Accept quest when 'Y' is pressed
         else if (key == ConsoleKey.Y)
-            _controller.GetGameWorld().AcceptQuest();
+            controller.GetGameWorld().AcceptQuest();
 
         // Change active character when 'C' is pressed
         else if (key == ConsoleKey.C)
-            _controller.GetGameWorld().ChangeActiveCharacter();
+            controller.GetGameWorld().ChangeActiveCharacter();
 
         // Move to the left when left arrow key is pressed
         else if (key == ConsoleKey.LeftArrow)
-            _controller.GetGameWorld().Move((0, -1));
+            controller.GetGameWorld().Move((0, -1));
 
         // Move to the right when right arrow key is pressed
         else if (key == ConsoleKey.RightArrow)
-            _controller.GetGameWorld().Move((0, 1));
+            controller.GetGameWorld().Move((0, 1));
 
         // Move up when up arrow key is pressed
         else if (key == ConsoleKey.UpArrow)
-            _controller.GetGameWorld().Move((-1, 0));
+            controller.GetGameWorld().Move((-1, 0));
 
         // Move down when down arrow key is pressed
         else if (key == ConsoleKey.DownArrow)
-            _controller.GetGameWorld().Move((1, 0));
+            controller.GetGameWorld().Move((1, 0));
     }
 }

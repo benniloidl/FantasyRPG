@@ -4,7 +4,6 @@ public class Controller : IObserver
 {
     private static Controller? _instance;
 
-    private readonly DatabaseManager _databaseManager;
     private GameController _controller;
     private GameWorld _gameWorld;
     private ITerminalState _terminalState;
@@ -13,11 +12,10 @@ public class Controller : IObserver
 
     private Controller()
     {
-        // Initialize database manager, game controller, game world, terminal state and notifications
-        _databaseManager = DatabaseManager.GetInstance();
+        // Initialize game controller, game world, terminal state and notifications
         _controller = new GameController();
         _gameWorld = GameWorld.GetInstance();
-        _terminalState = new LoadState(this);
+        _terminalState = new LoadState();
         _notifications = new List<string>();
 
         // Add the controller to the game world's quest manager as an observer
@@ -33,8 +31,6 @@ public class Controller : IObserver
         }
         return _instance;
     }
-
-    public DatabaseManager GetDatabaseManager() => _databaseManager;
 
     public GameController GetGameController() => _controller;
     public GameWorld GetGameWorld() => _gameWorld;

@@ -73,7 +73,7 @@ public class SaveState : ITerminalState
             if (key == ConsoleKey.Y)
             {
                 // Save character and remove from the list of characters to be asked to save
-                _controller.GetDatabaseManager().AddCharacter(character);
+                DatabaseManager.GetInstance().AddCharacter(character);
                 _characters.Remove(character);
                 _controller.AddNotification($"Character {character} saved.");
             }
@@ -92,7 +92,7 @@ public class SaveState : ITerminalState
             if (key == ConsoleKey.Y)
             {
                 // Save enemy and remove from the list of enemies to be asked to save
-                _controller.GetDatabaseManager().AddEnemy(enemy, enemyLocation);
+                DatabaseManager.GetInstance().AddEnemy(enemy, enemyLocation);
                 _enemies.Remove(enemy);
                 _controller.AddNotification($"Enemy {enemy} saved.");
             }
@@ -109,7 +109,7 @@ public class SaveState : ITerminalState
             if (key == ConsoleKey.Y)
             {
                 // Clear prior saved game world structures
-                _controller.GetDatabaseManager().ClearGameWorldStructures();
+                DatabaseManager.GetInstance().ClearGameWorldStructures();
 
                 // Save game world structures
                 for (int i = 0; i < _controller.GetGameWorld().GetWorldMap().Length; i++)
@@ -119,7 +119,7 @@ public class SaveState : ITerminalState
                         WorldMapStructure structure = _controller.GetGameWorld().GetWorldMap()[i][j];
                         if (structure != WorldMapStructure.None)
                         {
-                            _controller.GetDatabaseManager().AddGameWorldStructure(structure, (i, j));
+                            DatabaseManager.GetInstance().AddGameWorldStructure(structure, (i, j));
                         }
                     }
                 }

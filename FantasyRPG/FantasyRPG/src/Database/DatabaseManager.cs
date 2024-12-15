@@ -10,15 +10,20 @@ public class DatabaseManager
 {
     private static DatabaseManager? _instance;
 
-    private readonly SQLiteConnection sqlite_conn;
+    private readonly SQLiteConnection _connection;
+
+    private readonly List<Item> _items;
 
     private DatabaseManager()
     {
         // Initialize database
-        sqlite_conn = CreateConnection();
+        _connection = CreateConnection();
 
         // Create tables if they do not exist yet
-        CreateTablesIfNotExisting(sqlite_conn);
+        CreateTablesIfNotExisting();
+
+        // Load items from the database
+        _items = GetItems();
     }
 
     // Singleton pattern
@@ -34,26 +39,26 @@ public class DatabaseManager
     private SQLiteConnection CreateConnection()
     {
 
-        SQLiteConnection sqlite_conn;
+        SQLiteConnection connection;
 
         // Create a new database connection
-        sqlite_conn = new SQLiteConnection("Data Source=database.db; Version = 3; New = True; Compress = True; ");
+        connection = new SQLiteConnection("Data Source=database.db; Version = 3; New = True; Compress = True; ");
 
         // Open the connection
         try
         {
-            sqlite_conn.Open();
+            connection.Open();
         }
         catch (Exception ex)
         {
 
         }
-        return sqlite_conn;
+        return connection;
     }
 
-    private void CreateTablesIfNotExisting(SQLiteConnection conn)
+    private void CreateTablesIfNotExisting()
     {
-        SQLiteCommand sqlite_cmd = conn.CreateCommand();
+        SQLiteCommand command = _connection.CreateCommand();
 
         // All the commands for the tables to be created in the database
         string[] tables = new string[] {
@@ -68,32 +73,32 @@ public class DatabaseManager
         // Execute the SQL commands to create the tables
         foreach (string table in tables)
         {
-            sqlite_cmd.CommandText = table;
-            sqlite_cmd.ExecuteNonQuery();
+            command.CommandText = table;
+            command.ExecuteNonQuery();
         }
     }
 
     // Load items from the database
-    public List<Item> GetItems()
+    private List<Item> GetItems()
     {
-        SQLiteDataReader sqlite_datareader;
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "SELECT * FROM Item";
+        SQLiteDataReader datareader;
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Item";
 
-        sqlite_datareader = sqlite_cmd.ExecuteReader();
+        datareader = command.ExecuteReader();
         List<Item> items = new List<Item>();
-        while (sqlite_datareader.Read())
+        while (datareader.Read())
         {
-            int id = sqlite_datareader.GetInt32(0);
-            string type = sqlite_datareader.GetString(1);
-            int rarity = sqlite_datareader.GetInt32(2);
-            int? damage = sqlite_datareader.IsDBNull(3) ? null : sqlite_datareader.GetInt32(3);
-            int? defense = sqlite_datareader.IsDBNull(4) ? null : sqlite_datareader.GetInt32(4);
-            int? durability = sqlite_datareader.IsDBNull(5) ? null : sqlite_datareader.GetInt32(5);
-            string? effect = sqlite_datareader.IsDBNull(6) ? null : sqlite_datareader.GetString(6);
-            int? duration = sqlite_datareader.IsDBNull(7) ? null : sqlite_datareader.GetInt32(7);
-            int? weaponType = sqlite_datareader.IsDBNull(8) ? null : sqlite_datareader.GetInt32(8);
+            int id = datareader.GetInt32(0);
+            string type = datareader.GetString(1);
+            int rarity = datareader.GetInt32(2);
+            int? damage = datareader.IsDBNull(3) ? null : datareader.GetInt32(3);
+            int? defense = datareader.IsDBNull(4) ? null : datareader.GetInt32(4);
+            int? durability = datareader.IsDBNull(5) ? null : datareader.GetInt32(5);
+            string? effect = datareader.IsDBNull(6) ? null : datareader.GetString(6);
+            int? duration = datareader.IsDBNull(7) ? null : datareader.GetInt32(7);
+            int? weaponType = datareader.IsDBNull(8) ? null : datareader.GetInt32(8);
 
             Item item = null;
             switch (type)
@@ -119,88 +124,85 @@ public class DatabaseManager
     }
 
     // Save a new item to the database and return its id or update an existing item
-    public int AddItem(Item? item)
+    public int? AddItem(Item? item)
     {
-        if (item == null) return -1;
+        if (item == null) return null;
 
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
 
         // Check if the item already exists in the database
         if (item.Id != null)
         {
             // Check if the item exists in the database
-            sqlite_cmd.CommandText = "SELECT COUNT(*) FROM Item WHERE id = @id";
-            sqlite_cmd.Parameters.AddWithValue("@id", item.Id);
-            int count = Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM Item WHERE id = @id";
+            command.Parameters.AddWithValue("@id", item.Id);
+            int count = Convert.ToInt32(command.ExecuteScalar());
             if (count > 0)
             {
                 // Update the item in the database
-                sqlite_cmd.CommandText = "UPDATE Item SET type = @type, rarity = @rarity, damage = @damage, defense = @defense, durability = @durability, effect = @effect, duration = @duration, weaponType = @weaponType WHERE id = @id";
-                sqlite_cmd.Parameters.AddWithValue("@type", item.GetType().Name);
-                sqlite_cmd.Parameters.AddWithValue("@rarity", (int)item.ItemRarity);
-                sqlite_cmd.Parameters.AddWithValue("@damage", item is Weapon ? ((Weapon)item).Damage : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@defense", item is Armor ? ((Armor)item).Defense : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@durability", item is Armor ? ((Armor)item).Durability : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@effect", item is Potion ? ((Potion)item).Effect : (string)null);
-                sqlite_cmd.Parameters.AddWithValue("@duration", item is Potion ? ((Potion)item).Duration : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@weaponType", item is Weapon ? (int)((Weapon)item).WeaponType : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@id", item.Id);
-                sqlite_cmd.ExecuteNonQuery();
+                command.CommandText = "UPDATE Item SET type = @type, rarity = @rarity, damage = @damage, defense = @defense, durability = @durability, effect = @effect, duration = @duration, weaponType = @weaponType WHERE id = @id";
+                command.Parameters.AddWithValue("@type", item.GetType().Name);
+                command.Parameters.AddWithValue("@rarity", (int)item.ItemRarity);
+                command.Parameters.AddWithValue("@damage", item is Weapon ? ((Weapon)item).Damage : (int?)null);
+                command.Parameters.AddWithValue("@defense", item is Armor ? ((Armor)item).Defense : (int?)null);
+                command.Parameters.AddWithValue("@durability", item is Armor ? ((Armor)item).Durability : (int?)null);
+                command.Parameters.AddWithValue("@effect", item is Potion ? ((Potion)item).Effect : (string)null);
+                command.Parameters.AddWithValue("@duration", item is Potion ? ((Potion)item).Duration : (int?)null);
+                command.Parameters.AddWithValue("@weaponType", item is Weapon ? (int)((Weapon)item).WeaponType : (int?)null);
+                command.Parameters.AddWithValue("@id", item.Id);
+                command.ExecuteNonQuery();
                 return item.Id.Value;
             }
         }
 
         // Insert the item into the database
-        sqlite_cmd.CommandText = "INSERT INTO Item (type, rarity, damage, defense, durability, effect, duration, weaponType) VALUES(@type, @rarity, @damage, @defense, @durability, @effect, @duration, @weaponType); SELECT last_insert_rowid();";
-        sqlite_cmd.Parameters.AddWithValue("@type", item.GetType().Name);
-        sqlite_cmd.Parameters.AddWithValue("@rarity", (int)item.ItemRarity);
-        sqlite_cmd.Parameters.AddWithValue("@damage", item is Weapon ? ((Weapon)item).Damage : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@defense", item is Armor ? ((Armor)item).Defense : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@durability", item is Armor ? ((Armor)item).Durability : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@effect", item is Potion ? ((Potion)item).Effect : (string)null);
-        sqlite_cmd.Parameters.AddWithValue("@duration", item is Potion ? ((Potion)item).Duration : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@weaponType", item is Weapon ? (int)((Weapon)item).WeaponType : (int?)null);
-        return Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+        command.CommandText = "INSERT INTO Item (type, rarity, damage, defense, durability, effect, duration, weaponType) VALUES(@type, @rarity, @damage, @defense, @durability, @effect, @duration, @weaponType); SELECT last_insert_rowid();";
+        command.Parameters.AddWithValue("@type", item.GetType().Name);
+        command.Parameters.AddWithValue("@rarity", (int)item.ItemRarity);
+        command.Parameters.AddWithValue("@damage", item is Weapon ? ((Weapon)item).Damage : (int?)null);
+        command.Parameters.AddWithValue("@defense", item is Armor ? ((Armor)item).Defense : (int?)null);
+        command.Parameters.AddWithValue("@durability", item is Armor ? ((Armor)item).Durability : (int?)null);
+        command.Parameters.AddWithValue("@effect", item is Potion ? ((Potion)item).Effect : (string)null);
+        command.Parameters.AddWithValue("@duration", item is Potion ? ((Potion)item).Duration : (int?)null);
+        command.Parameters.AddWithValue("@weaponType", item is Weapon ? (int)((Weapon)item).WeaponType : (int?)null);
+        return Convert.ToInt32(command.ExecuteScalar());
     }
 
     public void RemoveItem(int id)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "DELETE FROM Item WHERE id = @id";
-        sqlite_cmd.Parameters.AddWithValue("@id", id);
-        sqlite_cmd.ExecuteNonQuery();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "DELETE FROM Item WHERE id = @id";
+        command.Parameters.AddWithValue("@id", id);
+        command.ExecuteNonQuery();
     }
 
     // Load characters from the database
     public List<Character> GetCharacters()
     {
-        // Load items from the database to be equipped by the characters later
-        List<Item> items = GetItems();
+        SQLiteDataReader datareader;
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Character";
 
-        SQLiteDataReader sqlite_datareader;
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "SELECT * FROM Character";
-
-        sqlite_datareader = sqlite_cmd.ExecuteReader();
+        datareader = command.ExecuteReader();
         List<Character> characters = new List<Character>();
-        while (sqlite_datareader.Read())
+        while (datareader.Read())
         {
-            int id = sqlite_datareader.GetInt32(0);
-            string type = sqlite_datareader.GetString(1);
-            int health = sqlite_datareader.GetInt32(2);
-            int mana = sqlite_datareader.GetInt32(3);
-            int strength = sqlite_datareader.GetInt32(4);
-            int agility = sqlite_datareader.GetInt32(5);
-            int speed = sqlite_datareader.GetInt32(6);
-            int? equippedWeaponId = sqlite_datareader.IsDBNull(7) ? null : sqlite_datareader.GetInt32(7);
-            int? equippedDefensiveId = sqlite_datareader.IsDBNull(8) ? null : sqlite_datareader.GetInt32(8);
-            int? equippedUtilityId = sqlite_datareader.IsDBNull(9) ? null : sqlite_datareader.GetInt32(9);
-            int? swordDamage = sqlite_datareader.IsDBNull(10) ? null : sqlite_datareader.GetInt32(10);
-            int? crazyness = sqlite_datareader.IsDBNull(11) ? null : sqlite_datareader.GetInt32(11);
-            int? amountOfArrows = sqlite_datareader.IsDBNull(12) ? null : sqlite_datareader.GetInt32(12);
+            int id = datareader.GetInt32(0);
+            string type = datareader.GetString(1);
+            int health = datareader.GetInt32(2);
+            int mana = datareader.GetInt32(3);
+            int strength = datareader.GetInt32(4);
+            int agility = datareader.GetInt32(5);
+            int speed = datareader.GetInt32(6);
+            int? equippedWeaponId = datareader.IsDBNull(7) ? null : datareader.GetInt32(7);
+            int? equippedDefensiveId = datareader.IsDBNull(8) ? null : datareader.GetInt32(8);
+            int? equippedUtilityId = datareader.IsDBNull(9) ? null : datareader.GetInt32(9);
+            int? swordDamage = datareader.IsDBNull(10) ? null : datareader.GetInt32(10);
+            int? crazyness = datareader.IsDBNull(11) ? null : datareader.GetInt32(11);
+            int? amountOfArrows = datareader.IsDBNull(12) ? null : datareader.GetInt32(12);
 
             // Create a character based on the type with basic attributes
             CharacterFactory characterFactory = new CharacterFactory();
@@ -214,11 +216,11 @@ public class DatabaseManager
 
             // Equip items to the character
             if (equippedWeaponId != null)
-                character.EquipItem(items.First(item => item.Id == equippedWeaponId));
+                character.EquipItem(_items.First(item => item.Id == equippedWeaponId));
             if (equippedDefensiveId != null)
-                character.EquipItem(items.First(item => item.Id == equippedDefensiveId));
+                character.EquipItem(_items.First(item => item.Id == equippedDefensiveId));
             if (equippedUtilityId != null)
-                character.EquipItem(items.First(item => item.Id == equippedUtilityId));
+                character.EquipItem(_items.First(item => item.Id == equippedUtilityId));
 
             // Apply character type specific attributes
             if (swordDamage != null)
@@ -228,42 +230,62 @@ public class DatabaseManager
             if (amountOfArrows != null)
                 ((Archer)character).AmountOfArrows = amountOfArrows.Value;
 
+            // Get all items in the character's inventory
+            LoadCharacterInventoryItems(character);
+
             characters.Add(character);
         }
         return characters;
     }
 
+    // Add all items that are saved in InventoryItem and belong to the character to the character's inventory
+    private void LoadCharacterInventoryItems(Character character)
+    {
+        if (character == null) return;
+
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT itemId FROM InventoryItem WHERE characterId = @characterId";
+        command.Parameters.AddWithValue("@characterId", character.Id);
+        SQLiteDataReader sqlite_datareaderInventory = command.ExecuteReader();
+        while (sqlite_datareaderInventory.Read())
+        {
+            int itemId = sqlite_datareaderInventory.GetInt32(0);
+            character.GetInventory().AddItem(_items.First(item => item.Id == itemId));
+        }
+    }
+
     // Save a new character to the database and return its id or update an existing character
     public int AddCharacter(Character character)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
 
         // Check if the character already exists in the database
         if (character.Id != null)
         {
             // Check if the character exists in the database
-            sqlite_cmd.CommandText = "SELECT COUNT(*) FROM Character WHERE id = @id";
-            sqlite_cmd.Parameters.AddWithValue("@id", character.Id);
-            int count = Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM Character WHERE id = @id";
+            command.Parameters.AddWithValue("@id", character.Id);
+            int count = Convert.ToInt32(command.ExecuteScalar());
             if (count > 0)
             {
                 // Update the character in the database
-                sqlite_cmd.CommandText = "UPDATE Character SET type = @type, health = @health, mana = @mana, strength = @strength, agility = @agility, speed = @speed, equippedWeaponId = @equippedWeaponId, equippedDefensiveId = @equippedDefensiveId, equippedUtilityId = @equippedUtilityId, swordDamage = @swordDamage, crazyness = @crazyness, amountOfArrows = @amountOfArrows WHERE id = @id";
-                sqlite_cmd.Parameters.AddWithValue("@type", character.GetType().Name);
-                sqlite_cmd.Parameters.AddWithValue("@health", character.Health);
-                sqlite_cmd.Parameters.AddWithValue("@mana", character.Mana);
-                sqlite_cmd.Parameters.AddWithValue("@strength", character.Strength);
-                sqlite_cmd.Parameters.AddWithValue("@agility", character.Agility);
-                sqlite_cmd.Parameters.AddWithValue("@speed", character.Speed);
-                sqlite_cmd.Parameters.AddWithValue("@equippedWeaponId", character.GetEquippedWeapon()?.Id ?? (object)DBNull.Value);
-                sqlite_cmd.Parameters.AddWithValue("@equippedDefensiveId", character.GetEquippedDefensive()?.Id ?? (object)DBNull.Value);
-                sqlite_cmd.Parameters.AddWithValue("@equippedUtilityId", character.GetEquippedUtility()?.Id ?? (object)DBNull.Value);
-                sqlite_cmd.Parameters.AddWithValue("@swordDamage", character is Warrior ? ((Warrior)character).SwordDamage : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@crazyness", character is Mage ? ((Mage)character).Crazyness : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@amountOfArrows", character is Archer ? ((Archer)character).AmountOfArrows : (int?)null);
-                sqlite_cmd.Parameters.AddWithValue("@id", character.Id);
-                sqlite_cmd.ExecuteNonQuery();
+                command.CommandText = "UPDATE Character SET type = @type, health = @health, mana = @mana, strength = @strength, agility = @agility, speed = @speed, equippedWeaponId = @equippedWeaponId, equippedDefensiveId = @equippedDefensiveId, equippedUtilityId = @equippedUtilityId, swordDamage = @swordDamage, crazyness = @crazyness, amountOfArrows = @amountOfArrows WHERE id = @id";
+                command.Parameters.AddWithValue("@type", character.GetType().Name);
+                command.Parameters.AddWithValue("@health", character.Health);
+                command.Parameters.AddWithValue("@mana", character.Mana);
+                command.Parameters.AddWithValue("@strength", character.Strength);
+                command.Parameters.AddWithValue("@agility", character.Agility);
+                command.Parameters.AddWithValue("@speed", character.Speed);
+                command.Parameters.AddWithValue("@equippedWeaponId", character.GetEquippedWeapon()?.Id ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@equippedDefensiveId", character.GetEquippedDefensive()?.Id ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@equippedUtilityId", character.GetEquippedUtility()?.Id ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@swordDamage", character is Warrior ? ((Warrior)character).SwordDamage : (int?)null);
+                command.Parameters.AddWithValue("@crazyness", character is Mage ? ((Mage)character).Crazyness : (int?)null);
+                command.Parameters.AddWithValue("@amountOfArrows", character is Archer ? ((Archer)character).AmountOfArrows : (int?)null);
+                command.Parameters.AddWithValue("@id", character.Id);
+                command.ExecuteNonQuery();
 
                 AddCharacterItems(character);
 
@@ -272,23 +294,23 @@ public class DatabaseManager
         }
 
         // Insert the character into the database
-        sqlite_cmd.CommandText = "INSERT INTO Character (type, health, mana, strength, agility, speed, equippedWeaponId, equippedDefensiveId, equippedUtilityId, swordDamage, crazyness, amountOfArrows) VALUES(@type, @health, @mana, @strength, @agility, @speed, @equippedWeaponId, @equippedDefensiveId, @equippedUtilityId, @swordDamage, @crazyness, @amountOfArrows); SELECT last_insert_rowid();";
-        sqlite_cmd.Parameters.AddWithValue("@type", character.GetType().Name);
-        sqlite_cmd.Parameters.AddWithValue("@health", character.Health);
-        sqlite_cmd.Parameters.AddWithValue("@mana", character.Mana);
-        sqlite_cmd.Parameters.AddWithValue("@strength", character.Strength);
-        sqlite_cmd.Parameters.AddWithValue("@agility", character.Agility);
-        sqlite_cmd.Parameters.AddWithValue("@speed", character.Speed);
-        sqlite_cmd.Parameters.AddWithValue("@equippedWeaponId", character.GetEquippedWeapon()?.Id ?? (object)DBNull.Value);
-        sqlite_cmd.Parameters.AddWithValue("@equippedDefensiveId", character.GetEquippedDefensive()?.Id ?? (object)DBNull.Value);
-        sqlite_cmd.Parameters.AddWithValue("@equippedUtilityId", character.GetEquippedUtility()?.Id ?? (object)DBNull.Value);
-        sqlite_cmd.Parameters.AddWithValue("@swordDamage", character is Warrior ? ((Warrior)character).SwordDamage : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@crazyness", character is Mage ? ((Mage)character).Crazyness : (int?)null);
-        sqlite_cmd.Parameters.AddWithValue("@amountOfArrows", character is Archer ? ((Archer)character).AmountOfArrows : (int?)null);
+        command.CommandText = "INSERT INTO Character (type, health, mana, strength, agility, speed, equippedWeaponId, equippedDefensiveId, equippedUtilityId, swordDamage, crazyness, amountOfArrows) VALUES(@type, @health, @mana, @strength, @agility, @speed, @equippedWeaponId, @equippedDefensiveId, @equippedUtilityId, @swordDamage, @crazyness, @amountOfArrows); SELECT last_insert_rowid();";
+        command.Parameters.AddWithValue("@type", character.GetType().Name);
+        command.Parameters.AddWithValue("@health", character.Health);
+        command.Parameters.AddWithValue("@mana", character.Mana);
+        command.Parameters.AddWithValue("@strength", character.Strength);
+        command.Parameters.AddWithValue("@agility", character.Agility);
+        command.Parameters.AddWithValue("@speed", character.Speed);
+        command.Parameters.AddWithValue("@equippedWeaponId", character.GetEquippedWeapon()?.Id ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@equippedDefensiveId", character.GetEquippedDefensive()?.Id ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@equippedUtilityId", character.GetEquippedUtility()?.Id ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@swordDamage", character is Warrior ? ((Warrior)character).SwordDamage : (int?)null);
+        command.Parameters.AddWithValue("@crazyness", character is Mage ? ((Mage)character).Crazyness : (int?)null);
+        command.Parameters.AddWithValue("@amountOfArrows", character is Archer ? ((Archer)character).AmountOfArrows : (int?)null);
 
         AddCharacterItems(character);
 
-        return Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+        return Convert.ToInt32(command.ExecuteScalar());
     }
 
     private void AddCharacterItems(Character character)
@@ -307,37 +329,34 @@ public class DatabaseManager
 
     public void RemoveCharacter(int id)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "DELETE FROM Character WHERE id = @id";
-        sqlite_cmd.Parameters.AddWithValue("@id", id);
-        sqlite_cmd.ExecuteNonQuery();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "DELETE FROM Character WHERE id = @id";
+        command.Parameters.AddWithValue("@id", id);
+        command.ExecuteNonQuery();
     }
 
     // Load enemies from the database
-    public Dictionary<Enemy, (int, int)?> GetEnemies()
+    public Dictionary<Enemy, (int, int)> GetEnemies()
     {
-        // Load items from the database to be equipped by the enemies later
-        List<Item> items = GetItems();
+        SQLiteDataReader datareader;
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT * FROM Enemy";
 
-        SQLiteDataReader sqlite_datareader;
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "SELECT * FROM Enemy";
-
-        sqlite_datareader = sqlite_cmd.ExecuteReader();
-        Dictionary<Enemy, (int, int)?> enemies = new Dictionary<Enemy, (int, int)?>();
-        while (sqlite_datareader.Read())
+        datareader = command.ExecuteReader();
+        Dictionary<Enemy, (int, int)> enemies = new Dictionary<Enemy, (int, int)>();
+        while (datareader.Read())
         {
-            int id = sqlite_datareader.GetInt32(0);
-            string type = sqlite_datareader.GetString(1);
-            string name = sqlite_datareader.GetString(2);
-            int health = sqlite_datareader.GetInt32(3);
-            int mana = sqlite_datareader.GetInt32(4);
-            int strength = sqlite_datareader.GetInt32(5);
-            int agility = sqlite_datareader.GetInt32(6);
-            int rank = sqlite_datareader.GetInt32(7);
-            int? weaponId = sqlite_datareader.IsDBNull(8) ? null : sqlite_datareader.GetInt32(8);
+            int id = datareader.GetInt32(0);
+            string type = datareader.GetString(1);
+            string name = datareader.GetString(2);
+            int health = datareader.GetInt32(3);
+            int mana = datareader.GetInt32(4);
+            int strength = datareader.GetInt32(5);
+            int agility = datareader.GetInt32(6);
+            int rank = datareader.GetInt32(7);
+            int? weaponId = datareader.IsDBNull(8) ? null : datareader.GetInt32(8);
 
             // Determine the factory to use based on the enemy type
             IEnemyFactory enemyFactory = null;
@@ -366,55 +385,61 @@ public class DatabaseManager
 
             // Equip items to the enemy
             if (weaponId != null)
-                enemy.Weapon = (Weapon)items.First(item => item.Id == weaponId);
+                enemy.Weapon = (Weapon)_items.First(item => item.Id == weaponId);
+            else enemy.Weapon = null;
 
             // Get the enemy position from the database
-            sqlite_cmd.CommandText = "SELECT * FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
-            sqlite_cmd.Parameters.AddWithValue("@enemyId", id);
-            SQLiteDataReader sqlite_datareaderPosition = sqlite_cmd.ExecuteReader();
-            (int, int)? position = null;
-            if (sqlite_datareaderPosition.Read())
-            {
-                int coordX = sqlite_datareaderPosition.GetInt32(1);
-                int coordY = sqlite_datareaderPosition.GetInt32(2);
-                position = (coordX, coordY);
-            }
+            (int, int)? position = LoadEnemyGameWorldPosition(id);
 
-            enemies.Add(enemy, position);
+            enemies.Add(enemy, position ?? GameWorld.DEFAULT_ENEMY_SPAWN_LOCATION);
         }
         return enemies;
+    }
+
+    // Load the world map position of an enemy from the database
+    private (int, int)? LoadEnemyGameWorldPosition(int enemyId)
+    {
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT * FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
+        command.Parameters.AddWithValue("@enemyId", enemyId);
+        SQLiteDataReader sqlite_datareaderPosition = command.ExecuteReader();
+        if (sqlite_datareaderPosition.Read())
+        {
+            int coordX = sqlite_datareaderPosition.GetInt32(1);
+            int coordY = sqlite_datareaderPosition.GetInt32(2);
+            return (coordX, coordY);
+        }
+        return null;
     }
 
     // Save a new enemy to the database and return its id or update an existing enemy
     public int AddEnemy(Enemy enemy, (int, int) position)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
 
         // Check if the enemy already exists in the database
         if (enemy.Id != null)
         {
             // Check if the enemy exists in the database
-            sqlite_cmd.CommandText = "SELECT COUNT(*) FROM Enemy WHERE id = @id";
-            sqlite_cmd.Parameters.AddWithValue("@id", enemy.Id);
-            int count = Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM Enemy WHERE id = @id";
+            command.Parameters.AddWithValue("@id", enemy.Id);
+            int count = Convert.ToInt32(command.ExecuteScalar());
             if (count > 0)
             {
                 // Update the enemy in the database
-                sqlite_cmd.CommandText = "UPDATE Enemy SET type = @type, name = @name, health = @health, mana = @mana, strength = @strength, agility = @agility, rank = @rank, weaponId = @weaponId WHERE id = @id";
-                sqlite_cmd.Parameters.AddWithValue("@type", enemy.GetType().Name);
-                sqlite_cmd.Parameters.AddWithValue("@name", enemy.Name);
-                sqlite_cmd.Parameters.AddWithValue("@health", enemy.Health);
-                sqlite_cmd.Parameters.AddWithValue("@mana", enemy.Mana);
-                sqlite_cmd.Parameters.AddWithValue("@strength", enemy.Strength);
-                sqlite_cmd.Parameters.AddWithValue("@agility", enemy.Agility);
-                sqlite_cmd.Parameters.AddWithValue("@rank", (int)enemy.Rank);
-                sqlite_cmd.Parameters.AddWithValue("@weaponId", enemy.Weapon?.Id ?? (object)DBNull.Value);
-                sqlite_cmd.Parameters.AddWithValue("@id", enemy.Id);
-                sqlite_cmd.ExecuteNonQuery();
-
-                // Save the equipped weapon of the enemy to the database
-                AddItem(enemy.Weapon);
+                command.CommandText = "UPDATE Enemy SET type = @type, name = @name, health = @health, mana = @mana, strength = @strength, agility = @agility, rank = @rank, weaponId = @weaponId WHERE id = @id";
+                command.Parameters.AddWithValue("@type", enemy.GetType().Name);
+                command.Parameters.AddWithValue("@name", enemy.Name);
+                command.Parameters.AddWithValue("@health", enemy.Health);
+                command.Parameters.AddWithValue("@mana", enemy.Mana);
+                command.Parameters.AddWithValue("@strength", enemy.Strength);
+                command.Parameters.AddWithValue("@agility", enemy.Agility);
+                command.Parameters.AddWithValue("@rank", (int)enemy.Rank);
+                command.Parameters.AddWithValue("@weaponId", AddItem(enemy.Weapon));
+                command.Parameters.AddWithValue("@id", enemy.Id);
+                command.ExecuteNonQuery();
 
                 // Save the enemy position to the database
                 
@@ -425,23 +450,18 @@ public class DatabaseManager
         }
 
         // Insert the enemy into the database
-        sqlite_cmd.CommandText = "INSERT INTO Enemy (type, name, health, mana, strength, agility, rank, weaponId) VALUES(@type, @name, @health, @mana, @strength, @agility, @rank, @weaponId); SELECT last_insert_rowid(); SELECT last_insert_rowid();";
-        sqlite_cmd.Parameters.AddWithValue("@type", enemy.GetType().Name);
-        sqlite_cmd.Parameters.AddWithValue("@name", enemy.Name);
-        sqlite_cmd.Parameters.AddWithValue("@health", enemy.Health);
-        sqlite_cmd.Parameters.AddWithValue("@mana", enemy.Mana);
-        sqlite_cmd.Parameters.AddWithValue("@strength", enemy.Strength);
-        sqlite_cmd.Parameters.AddWithValue("@agility", enemy.Agility);
-        sqlite_cmd.Parameters.AddWithValue("@rank", (int)enemy.Rank);
-        sqlite_cmd.Parameters.AddWithValue("@weaponId", enemy.Weapon?.Id ?? (object)DBNull.Value);
-
-        // Save the equipped weapon of the enemy to the database
-        AddItem(enemy.Weapon);
-
-        int id = Convert.ToInt32(sqlite_cmd.ExecuteScalar());
+        command.CommandText = "INSERT INTO Enemy (type, name, health, mana, strength, agility, rank, weaponId) VALUES(@type, @name, @health, @mana, @strength, @agility, @rank, @weaponId); SELECT last_insert_rowid(); SELECT last_insert_rowid();";
+        command.Parameters.AddWithValue("@type", enemy.GetType().Name);
+        command.Parameters.AddWithValue("@name", enemy.Name);
+        command.Parameters.AddWithValue("@health", enemy.Health);
+        command.Parameters.AddWithValue("@mana", enemy.Mana);
+        command.Parameters.AddWithValue("@strength", enemy.Strength);
+        command.Parameters.AddWithValue("@agility", enemy.Agility);
+        command.Parameters.AddWithValue("@rank", (int)enemy.Rank);
+        command.Parameters.AddWithValue("@weaponId", AddItem(enemy.Weapon));
 
         // Save the enemy position to the database
-        
+        int id = Convert.ToInt32(command.ExecuteScalar());
         AddEnemyPosition(id, position);
 
         return id;
@@ -449,51 +469,51 @@ public class DatabaseManager
 
     private void AddEnemyPosition(int enemyId, (int, int) position)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
 
         // Clear prior positions
-        sqlite_cmd.CommandText = "DELETE FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
-        sqlite_cmd.Parameters.AddWithValue("@enemyId", enemyId);
-        sqlite_cmd.ExecuteNonQuery();
+        command.CommandText = "DELETE FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
+        command.Parameters.AddWithValue("@enemyId", enemyId);
+        command.ExecuteNonQuery();
 
         // Insert the enemy position into the database
-        sqlite_cmd.CommandText = "INSERT INTO GameWorldEnemyPosition (enemyId, coordX, coordY) VALUES(@enemyId, @coordX, @coordY)";
-        sqlite_cmd.Parameters.AddWithValue("@enemyId", enemyId);
-        sqlite_cmd.Parameters.AddWithValue("@coordX", position.Item1);
-        sqlite_cmd.Parameters.AddWithValue("@coordY", position.Item2);
-        sqlite_cmd.ExecuteNonQuery();
+        command.CommandText = "INSERT INTO GameWorldEnemyPosition (enemyId, coordX, coordY) VALUES(@enemyId, @coordX, @coordY)";
+        command.Parameters.AddWithValue("@enemyId", enemyId);
+        command.Parameters.AddWithValue("@coordX", position.Item1);
+        command.Parameters.AddWithValue("@coordY", position.Item2);
+        command.ExecuteNonQuery();
     }
 
     public void RemoveEnemy(int id)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "DELETE FROM Enemy WHERE id = @id";
-        sqlite_cmd.Parameters.AddWithValue("@id", id);
-        sqlite_cmd.ExecuteNonQuery();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "DELETE FROM Enemy WHERE id = @id";
+        command.Parameters.AddWithValue("@id", id);
+        command.ExecuteNonQuery();
 
         // Also remove the enemy position from the database
-        sqlite_cmd.CommandText = "DELETE FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
-        sqlite_cmd.Parameters.AddWithValue("@enemyId", id);
-        sqlite_cmd.ExecuteNonQuery();
+        command.CommandText = "DELETE FROM GameWorldEnemyPosition WHERE enemyId = @enemyId";
+        command.Parameters.AddWithValue("@enemyId", id);
+        command.ExecuteNonQuery();
     }
 
     // Load game world structures and their coordinates from the database
     public Dictionary<(int, int), WorldMapStructure> GetGameWorldStructures()
     {
-        SQLiteDataReader sqlite_datareader;
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "SELECT * FROM GameWorldStructure";
+        SQLiteDataReader datareader;
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "SELECT * FROM GameWorldStructure";
 
-        sqlite_datareader = sqlite_cmd.ExecuteReader();
+        datareader = command.ExecuteReader();
         Dictionary<(int, int), WorldMapStructure> worldMap = new Dictionary<(int, int), WorldMapStructure>();
-        while (sqlite_datareader.Read())
+        while (datareader.Read())
         {
-            WorldMapStructure structure = (WorldMapStructure)sqlite_datareader.GetInt32(0);
-            int coordX = sqlite_datareader.GetInt32(1);
-            int coordY = sqlite_datareader.GetInt32(2);
+            WorldMapStructure structure = (WorldMapStructure)datareader.GetInt32(0);
+            int coordX = datareader.GetInt32(1);
+            int coordY = datareader.GetInt32(2);
             worldMap.Add((coordX, coordY), structure);
         }
         return worldMap;
@@ -501,22 +521,22 @@ public class DatabaseManager
 
     public void AddGameWorldStructure(WorldMapStructure structure, (int, int) position)
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
 
         // Insert the structure into the database
-        sqlite_cmd.CommandText = "INSERT INTO GameWorldStructure (worldMapStructure, coordX, coordY) VALUES(@worldMapStructure, @coordX, @coordY)";
-        sqlite_cmd.Parameters.AddWithValue("@worldMapStructure", (int)structure);
-        sqlite_cmd.Parameters.AddWithValue("@coordX", position.Item1);
-        sqlite_cmd.Parameters.AddWithValue("@coordY", position.Item2);
-        sqlite_cmd.ExecuteNonQuery();
+        command.CommandText = "INSERT INTO GameWorldStructure (worldMapStructure, coordX, coordY) VALUES(@worldMapStructure, @coordX, @coordY)";
+        command.Parameters.AddWithValue("@worldMapStructure", (int)structure);
+        command.Parameters.AddWithValue("@coordX", position.Item1);
+        command.Parameters.AddWithValue("@coordY", position.Item2);
+        command.ExecuteNonQuery();
     }
 
     public void ClearGameWorldStructures()
     {
-        SQLiteCommand sqlite_cmd;
-        sqlite_cmd = sqlite_conn.CreateCommand();
-        sqlite_cmd.CommandText = "DELETE FROM GameWorldStructure";
-        sqlite_cmd.ExecuteNonQuery();
+        SQLiteCommand command;
+        command = _connection.CreateCommand();
+        command.CommandText = "DELETE FROM GameWorldStructure";
+        command.ExecuteNonQuery();
     }
 }

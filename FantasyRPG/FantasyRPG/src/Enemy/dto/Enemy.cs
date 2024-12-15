@@ -7,7 +7,7 @@
     public int Strength { get; set; }
     public int Agility { get; set; }
     public EnemyRank Rank { get; protected set; }
-    public Weapon Weapon { get; set; }
+    public Weapon? Weapon { get; set; }
 
     // Common actions
     public abstract void Move();
