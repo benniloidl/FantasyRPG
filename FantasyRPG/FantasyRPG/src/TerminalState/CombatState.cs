@@ -11,13 +11,13 @@ public class CombatState : ITerminalState
         _controller = Controller.GetInstance();
 
         // Get the enemy at the current location, or throw an exception if no enemy is present
-        _enemy = _controller.GetGameWorld().GetEnemyAtCurrentLocation() ?? throw new InvalidOperationException("No enemy present at current location");
+        _enemy = GameWorld.GetInstance().GetEnemyAtCurrentLocation() ?? throw new InvalidOperationException("No enemy present at current location");
     }
 
     public void PrintTerminal()
     {
         // Change TerminalState to DefaultState when no enemies are present
-        if (_controller.GetGameWorld().GetEnemyAtCurrentLocation() == null)
+        if (GameWorld.GetInstance().GetEnemyAtCurrentLocation() == null)
         {
             _controller.SetTerminalState(new DefaultState());
             _controller.ForceUpdate();
@@ -29,7 +29,7 @@ public class CombatState : ITerminalState
         Console.WriteLine();
 
         // Print current quest
-        _controller.GetGameWorld().PrintCurrentQuest();
+        GameWorld.GetInstance().PrintCurrentQuest();
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
@@ -37,10 +37,10 @@ public class CombatState : ITerminalState
         Console.Write($"Characters:");
 
         // Iterate over characters
-        foreach (Character character in _controller.GetGameWorld().GetCharacters())
+        foreach (Character character in GameWorld.GetInstance().GetCharacters())
         {
             // Make the active character stand out in blue
-            if (character == _controller.GetGameWorld().GetActiveCharacter())
+            if (character == GameWorld.GetInstance().GetActiveCharacter())
                 Console.ForegroundColor = ConsoleColor.Blue;
 
             // Indicate downed characters with a dead skull
@@ -54,11 +54,11 @@ public class CombatState : ITerminalState
         }
 
         // Print active character's health and equipment
-        Console.WriteLine(_controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
-        Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
-        Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
-        Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
-        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
+        Console.WriteLine(GameWorld.GetInstance().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
+        Console.Write($" ❤️ {GameWorld.GetInstance().GetActiveCharacter().Health}");
+        Console.Write($" 🗡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
+        Console.Write($" 🛡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
+        Console.WriteLine($" 🧪 {GameWorld.GetInstance().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");
@@ -74,7 +74,7 @@ public class CombatState : ITerminalState
         Console.WriteLine();
 
         Console.WriteLine("Actions:");
-        if (_controller.GetGameWorld().GetActiveCharacter().Health > 0)
+        if (GameWorld.GetInstance().GetActiveCharacter().Health > 0)
             Console.WriteLine(" A: Attack");
         Console.WriteLine(" D: Defend");
         Console.WriteLine(" H: Heal");
@@ -87,11 +87,11 @@ public class CombatState : ITerminalState
     public void HandleInput(ConsoleKey key)
     {
         // Determine active character
-        Character activeCharacter = _controller.GetGameWorld().GetActiveCharacter();
+        Character activeCharacter = GameWorld.GetInstance().GetActiveCharacter();
 
         // Change active character when 'C' is pressed
         if (key == ConsoleKey.C)
-            _controller.GetGameWorld().ChangeActiveCharacter();
+            GameWorld.GetInstance().ChangeActiveCharacter();
 
         // Open inventory when 'I' is pressed
         else if (key == ConsoleKey.I)
@@ -110,7 +110,7 @@ public class CombatState : ITerminalState
             _controller.GetGameController().ExecuteCommand(new AttackCommand(activeCharacter, _enemy));
 
             // Check if quest is active and update its progress
-            _controller.GetGameWorld().UpdateQuestStatus();
+            GameWorld.GetInstance().UpdateQuestStatus();
         }
 
         // Execute defend command for active character

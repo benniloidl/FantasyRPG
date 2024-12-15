@@ -52,7 +52,7 @@
         {
             // Load the game world structures and quit the LoadState
             Controller controller = Controller.GetInstance();
-            controller.GetGameWorld().LoadWorldMapStructures(_worldMapStructures);
+            GameWorld.GetInstance().LoadWorldMapStructures(_worldMapStructures);
 
             Quit();
         }

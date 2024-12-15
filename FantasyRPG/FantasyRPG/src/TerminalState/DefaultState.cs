@@ -7,36 +7,36 @@ public class DefaultState : ITerminalState
         Controller controller = Controller.GetInstance();
 
         // Change TerminalState to CombatState when enemy is present
-        if (controller.GetGameWorld().GetEnemyAtCurrentLocation() != null)
+        if (GameWorld.GetInstance().GetEnemyAtCurrentLocation() != null)
         {
             controller.SetTerminalState(new CombatState());
             controller.ForceUpdate();
         }
 
         // Print map info
-        Console.WriteLine($"FantasyRPG ⌚ {controller.GetGameWorld().Time} ☀️ {controller.GetGameWorld().Weather}");
+        Console.WriteLine($"FantasyRPG ⌚ {GameWorld.GetInstance().Time} ☀️ {GameWorld.GetInstance().Weather}");
 
         // Print current character and health
-        Console.Write($"Active character: {controller.GetGameWorld().GetActiveCharacter()}");
-        Console.WriteLine(controller.GetGameWorld().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
+        Console.Write($"Active character: {GameWorld.GetInstance().GetActiveCharacter()}");
+        Console.WriteLine(GameWorld.GetInstance().HasMoreThanOneCharacter() ? " (Press 'C' to change)" : "");
         Console.WriteLine();
 
         // Print game world map
-        controller.GetGameWorld().PrintMap();
+        GameWorld.GetInstance().PrintMap();
         Console.WriteLine();
 
         // Print current quest
-        controller.GetGameWorld().PrintCurrentQuest();
+        GameWorld.GetInstance().PrintCurrentQuest();
         Console.WriteLine();
 
         // Print current character's location (structure, first NPC and available quests)
-        controller.GetGameWorld().PrintLocation();
-        controller.GetGameWorld().PrintAvailableQuest();
+        GameWorld.GetInstance().PrintLocation();
+        GameWorld.GetInstance().PrintAvailableQuest();
         Console.WriteLine();
 
         Console.WriteLine("Move using the arrow keys or");
 
-        if (controller.GetGameWorld().IsQuestAvailable())
+        if (GameWorld.GetInstance().IsQuestAvailable())
         {
             Console.WriteLine("You can press 'Y' to accept the quest");
         }
@@ -58,26 +58,26 @@ public class DefaultState : ITerminalState
 
         // Accept quest when 'Y' is pressed
         else if (key == ConsoleKey.Y)
-            controller.GetGameWorld().AcceptQuest();
+            GameWorld.GetInstance().AcceptQuest();
 
         // Change active character when 'C' is pressed
         else if (key == ConsoleKey.C)
-            controller.GetGameWorld().ChangeActiveCharacter();
+            GameWorld.GetInstance().ChangeActiveCharacter();
 
         // Move to the left when left arrow key is pressed
         else if (key == ConsoleKey.LeftArrow)
-            controller.GetGameWorld().Move((0, -1));
+            GameWorld.GetInstance().Move((0, -1));
 
         // Move to the right when right arrow key is pressed
         else if (key == ConsoleKey.RightArrow)
-            controller.GetGameWorld().Move((0, 1));
+            GameWorld.GetInstance().Move((0, 1));
 
         // Move up when up arrow key is pressed
         else if (key == ConsoleKey.UpArrow)
-            controller.GetGameWorld().Move((-1, 0));
+            GameWorld.GetInstance().Move((-1, 0));
 
         // Move down when down arrow key is pressed
         else if (key == ConsoleKey.DownArrow)
-            controller.GetGameWorld().Move((1, 0));
+            GameWorld.GetInstance().Move((1, 0));
     }
 }

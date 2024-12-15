@@ -20,13 +20,13 @@ public class InventoryState : ITerminalState
 
     public void PrintTerminal()
     {
-        Console.WriteLine($"Inventory of {_controller.GetGameWorld().GetActiveCharacter()}:");
+        Console.WriteLine($"Inventory of {GameWorld.GetInstance().GetActiveCharacter()}:");
         Console.WriteLine();
         Console.WriteLine("--------------------");
         Console.WriteLine();
 
         // Get items from active character's inventory
-        List<Item> items = _controller.GetGameWorld().GetActiveCharacter().GetInventory().GetItems();
+        List<Item> items = GameWorld.GetInstance().GetActiveCharacter().GetInventory().GetItems();
 
         // Print items in inventory
         for (int i = 0; i < items.Count; i++)
@@ -56,17 +56,17 @@ public class InventoryState : ITerminalState
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
+        Console.WriteLine($" 🗡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
         if (_selectedEquipmentIndex == 1)
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
+        Console.WriteLine($" 🛡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
         if (_selectedEquipmentIndex == 2)
         {
             Console.Write(">");
         }
-        Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
+        Console.WriteLine($" 🧪 {GameWorld.GetInstance().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
 
         Console.WriteLine();
         Console.WriteLine("--------------------");
@@ -88,7 +88,7 @@ public class InventoryState : ITerminalState
 
         // Move the selection right using the right arrow key, selected index cannot be greater than the number of items
         else if (key == ConsoleKey.RightArrow)
-            _selectedInventoryIndex = Math.Min(_controller.GetGameWorld().GetActiveCharacter().GetInventory().GetItems().Count - 1, _selectedInventoryIndex + 1);
+            _selectedInventoryIndex = Math.Min(GameWorld.GetInstance().GetActiveCharacter().GetInventory().GetItems().Count - 1, _selectedInventoryIndex + 1);
 
         // Move the currently selected equipment slot up using the arrow up key
         else if (key == ConsoleKey.UpArrow)
@@ -102,20 +102,20 @@ public class InventoryState : ITerminalState
         else if (key == ConsoleKey.E)
         {
             // Check if the inventory is empty
-            if (_controller.GetGameWorld().GetActiveCharacter().GetInventory().GetItems().Count == 0)
+            if (GameWorld.GetInstance().GetActiveCharacter().GetInventory().GetItems().Count == 0)
             {
                 return;
             }
 
-            Item item = _controller.GetGameWorld().GetActiveCharacter().GetInventory().GetItems()[_selectedInventoryIndex];
-            _controller.GetGameWorld().GetActiveCharacter().EquipItem(item);
+            Item item = GameWorld.GetInstance().GetActiveCharacter().GetInventory().GetItems()[_selectedInventoryIndex];
+            GameWorld.GetInstance().GetActiveCharacter().EquipItem(item);
         }
 
         // Unequip the selected item using 'U'
         else if (key == ConsoleKey.U)
         {
             // Determine active character
-            Character activeCharacter = _controller.GetGameWorld().GetActiveCharacter();
+            Character activeCharacter = GameWorld.GetInstance().GetActiveCharacter();
 
             // Determine which equipment slot should be unequipped
             switch (_selectedEquipmentIndex)

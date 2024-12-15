@@ -106,7 +106,7 @@
         Controller controller = Controller.GetInstance();
 
         // Add all selected characters to the game world
-        _characters.ForEach(character => controller.GetGameWorld().AddCharacter(character));
+        _characters.ForEach(character => GameWorld.GetInstance().AddCharacter(character));
 
         // Request a change to the next state
         _nextState = _toBeNextState;

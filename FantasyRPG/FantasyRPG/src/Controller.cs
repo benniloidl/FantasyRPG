@@ -33,7 +33,6 @@ public class Controller : IObserver
     }
 
     public GameController GetGameController() => _controller;
-    public GameWorld GetGameWorld() => _gameWorld;
 
     // Allow the terminal state to be updated
     public void SetTerminalState(ITerminalState terminalState) => _terminalState = terminalState;

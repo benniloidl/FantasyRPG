@@ -101,7 +101,7 @@
         Controller controller = Controller.GetInstance();
 
         // Add all selected enemies to the game world
-        _enemies.ForEach(enemy => controller.GetGameWorld().AddEnemy(enemy, _savedEnemies.GetValueOrDefault(enemy)));
+        _enemies.ForEach(enemy => GameWorld.GetInstance().AddEnemy(enemy, _savedEnemies.GetValueOrDefault(enemy)));
 
         // Request a change to the next state
         _nextState = _toBeNextState;

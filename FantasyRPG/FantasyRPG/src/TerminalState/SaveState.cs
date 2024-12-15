@@ -11,8 +11,8 @@ public class SaveState : ITerminalState
         _controller = Controller.GetInstance();
 
         // Get characters and enemies from game world and store them in local variables (array copies that do not affect the originals)
-        _characters = new List<Character>(_controller.GetGameWorld().GetCharacters());
-        _enemies = new Dictionary<Enemy, (int, int)>(_controller.GetGameWorld().GetEnemyLocations());
+        _characters = new List<Character>(GameWorld.GetInstance().GetCharacters());
+        _enemies = new Dictionary<Enemy, (int, int)>(GameWorld.GetInstance().GetEnemyLocations());
     }
 
     public void PrintTerminal()
@@ -28,10 +28,10 @@ public class SaveState : ITerminalState
         {
             Character character = _characters.First();
             Console.WriteLine($"character {character}");
-            Console.Write($" ❤️ {_controller.GetGameWorld().GetActiveCharacter().Health}");
-            Console.Write($" 🗡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
-            Console.Write($" 🛡️ {_controller.GetGameWorld().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
-            Console.WriteLine($" 🧪 {_controller.GetGameWorld().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
+            Console.Write($" ❤️ {GameWorld.GetInstance().GetActiveCharacter().Health}");
+            Console.Write($" 🗡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedWeapon()?.ToString() ?? "None"}");
+            Console.Write($" 🛡️ {GameWorld.GetInstance().GetActiveCharacter().GetEquippedDefensive()?.ToString() ?? "None"}");
+            Console.WriteLine($" 🧪 {GameWorld.GetInstance().GetActiveCharacter().GetEquippedUtility()?.ToString() ?? "None"}");
             Console.WriteLine($"and {character.GetInventory().GetItems().Count()} items in their inventory?");
         }
         else if (_enemies.Count > 0)
@@ -112,11 +112,11 @@ public class SaveState : ITerminalState
                 DatabaseManager.GetInstance().ClearGameWorldStructures();
 
                 // Save game world structures
-                for (int i = 0; i < _controller.GetGameWorld().GetWorldMap().Length; i++)
+                for (int i = 0; i < GameWorld.GetInstance().GetWorldMap().Length; i++)
                 {
-                    for (int j = 0; j < _controller.GetGameWorld().GetWorldMap()[i].Length; j++)
+                    for (int j = 0; j < GameWorld.GetInstance().GetWorldMap()[i].Length; j++)
                     {
-                        WorldMapStructure structure = _controller.GetGameWorld().GetWorldMap()[i][j];
+                        WorldMapStructure structure = GameWorld.GetInstance().GetWorldMap()[i][j];
                         if (structure != WorldMapStructure.None)
                         {
                             DatabaseManager.GetInstance().AddGameWorldStructure(structure, (i, j));
