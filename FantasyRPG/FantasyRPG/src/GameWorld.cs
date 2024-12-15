@@ -2,6 +2,8 @@
 {
     private static GameWorld? instance;
 
+    public static (int, int) DEFAULT_ENEMY_SPAWN_LOCATION = (2, 2);
+
     public int Time { get; set; }
     public string Weather { get; set; }
 
@@ -64,6 +66,24 @@
         return _worldMap;
     }
 
+    public void LoadWorldMapStructures(Dictionary<(int, int), WorldMapStructure> _worldMapStructures)
+    {
+        // Firstly, clear the world map
+        foreach (var row in _worldMap)
+        {
+            for (int i = 0; i < row.Length; i++)
+            {
+                row[i] = WorldMapStructure.None;
+            }
+        }
+
+        // Add the world map structures to the world map
+        foreach (var worldMapStructure in _worldMapStructures)
+        {
+            _worldMap[worldMapStructure.Key.Item1][worldMapStructure.Key.Item2] = worldMapStructure.Value;
+        }
+    }
+
     // Add character to the game world
     public void AddCharacter(Character character)
     {
@@ -72,6 +92,11 @@
 
         // Add character to the quest manager as an observer
         _questManager.RegisterObserver(character);
+    }
+
+    public void RemoveCharacter(Character character)
+    {
+        _characters.Remove(character);
     }
 
     public List<Character> GetCharacters() => _characters;
@@ -95,6 +120,8 @@
 
     // Add enemy to the game world
     public void AddEnemy(Enemy enemy, (int, int) location) => _enemyLocations.Add(enemy, location);
+
+    public Dictionary<Enemy, (int, int)> GetEnemyLocations() => _enemyLocations;
 
     // Get enemy at the current location of the active character
     public Enemy? GetEnemyAtCurrentLocation() => _enemyLocations.FirstOrDefault(enemy => enemy.Value == _location).Key;

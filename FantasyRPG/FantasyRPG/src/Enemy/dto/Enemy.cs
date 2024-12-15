@@ -1,12 +1,13 @@
 ﻿public abstract class Enemy
 {
-    public string Name { get; protected set; }
+    public int? Id { get; set; }
+    public string? Name { get; set; }
     public int Health { get; set; }
-    public int Mana { get; protected set; }
-    public int Strength { get; protected set; }
-    public int Agility { get; protected set; }
+    public int Mana { get; set; }
+    public int Strength { get; set; }
+    public int Agility { get; set; }
     public EnemyRank Rank { get; protected set; }
-    public Weapon Weapon { get; protected set; }
+    public Weapon? Weapon { get; set; }
 
     // Common actions
     public abstract void Move();

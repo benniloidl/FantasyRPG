@@ -15,7 +15,7 @@ public class Controller : IObserver
         // Initialize game controller, game world, terminal state and notifications
         _controller = new GameController();
         _gameWorld = GameWorld.GetInstance();
-        _terminalState = new DefaultState(this);
+        _terminalState = new LoadState();
         _notifications = new List<string>();
 
         // Add the controller to the game world's quest manager as an observer
@@ -50,8 +50,9 @@ public class Controller : IObserver
         if (_gameWorld.GetCharacters().TrueForAll(character => character.Health <= 0))
         {
             AddNotification("All characters are dead. Game over!");
-            Console.WriteLine("Quitting game...");
-            Environment.Exit(0);
+
+            // Change state to SaveState
+            _terminalState = new SaveState();
         }
 
         // Remove defeated enemies from the game world
